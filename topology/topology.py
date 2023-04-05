@@ -180,7 +180,9 @@ if __name__ == "__main__":
     # You may need some commands before stopping the network! If you don't, leave it empty
 
     ### COMPLETE THIS PART ###
+    # Delete all links
+    for link in net.links:
+        net.configLinkStatus(link, 'down')
+        net.delLink(link)
 
-
-
-    #net.stop()
+net.stop()

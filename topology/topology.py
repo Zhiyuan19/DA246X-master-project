@@ -185,4 +185,4 @@ if __name__ == "__main__":
         net.configLinkStatus(link, 'down')
         net.delLink(link)
 
-net.stop()
+    net.stop()

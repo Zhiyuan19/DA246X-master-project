@@ -20,12 +20,9 @@ import datetime
 
 import click_wrapper
 
-from pox.forwarding.l2_learning import LearningSwitch
+from l2_learning import LearningSwitch
 
 log = core.getLogger()
-
-
-
 
 
 class controller (object):
@@ -34,82 +31,50 @@ class controller (object):
 
     devices = dict()
 
-
-
     # Here you should save a reference to the place you saw the first time a specific source mac
 
     firstSeenAt = dict()
 
-
-
     def __init__(self):
-
-
 
         webserver.webserver(self)
 
         core.openflow.addListeners(self)
 
-        
-
-
-
     def _handle_ConnectionUp(self, event):
-
-        
-
         """
 
         This function is called everytime a new device starts in the network.
 
         You need to determine what is the new device and run the correct application based on that.
 
-        
+
 
         Note that for normal switches you should use l2_learning module that already is available in pox as an external module.
 
         """
 
-
-
         # In phase 2, you will need to run your network functions on the controller. Here is just an example how you can do it (Please ignore this for phase 1):
 
         # click = click_wrapper.start_click("../nfv/forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
 
-
-
-        # For the webserver part, you might need a record of switches that are already connected to the controller. 
+        # For the webserver part, you might need a record of switches that are already connected to the controller.
 
         # Please keep them in "devices".
 
         # For instance: self.devices[len(self.devices)] = fw
 
-        
-
-        
-
         l2_instance = LearningSwitch(event.connection, False)
 
-        
+        self.devices[len(self.devices)] = l2_instance
+
+        #print(l2_instance.macToPort)
 
         return
 
-        
-
-
-
-    	
-
-
-
     # This should be called by each element in your application when a new source MAC is seen
 
-
-
     def updatefirstSeenAt(self, mac, where):
-
-       
-
         """
 
         This function updates your first seen dictionary with the given input.
@@ -118,20 +83,18 @@ class controller (object):
 
         """
 
-       
-
         # TODO: More logic needed here!
 
-        self.firstSeenAt[mac] = (where, datetime.datetime.now().isoformat())
+        if mac in firstSeenAt:
 
+            return
 
+        else:
 
-
+            self.firstSeenAt[mac] = (
+                where, datetime.datetime.now().isoformat())
 
     def flush(self):
-
-
-
         """
 
         This will be called by the webserver and act as a 'soft restart'. It should:
@@ -144,13 +107,19 @@ class controller (object):
 
         """
 
+        for switch in self.devices.values():
+
+            switch.table.clear()
+
+        self.firstSeenAt.clear()
+
+        for connection in core.openflow._connections.values():
+
+            connection.send(of.ofp_flow_mod(command=of.OFPFC_DELETE))
+
         return
-
-
-
 
 
 def launch(configuration=""):
 
     core.registerNew(controller)
-

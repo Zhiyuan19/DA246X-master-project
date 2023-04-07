@@ -68,7 +68,7 @@ class controller (object):
 
         self.devices[len(self.devices)] = l2_instance
 
-        print(l2_instance.macToPort)
+        # print(l2_instance.macToPort)
 
         return
 
@@ -85,7 +85,7 @@ class controller (object):
 
         # TODO: More logic needed here!
 
-        if mac in firstSeenAt:
+        if mac in self.firstSeenAt:
 
             return
 
@@ -93,6 +93,10 @@ class controller (object):
 
             self.firstSeenAt[mac] = (
                 where, datetime.datetime.now().isoformat())
+
+            # print(where)
+
+        return
 
     def flush(self):
         """

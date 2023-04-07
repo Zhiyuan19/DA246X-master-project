@@ -58,17 +58,21 @@ def macs_map():
 
     res += f"Global MAC table\n"
 
-    res += f"Fill it with a proper content\n"
+    # res += f"Fill it with a proper content\n"
 
-    res += f"For instance:\n"
+    # res += f"For instance:\n"
 
-    res += f"11:22:33:44:55:66 : switch 1 - port 1 @ 2023-03-10 23:48:00"
+    # res += f"11:22:33:44:55:66 : switch 1 - port 1 @ 2023-03-10 23:48:00"
 
-    res += f"11:22:33:44:44:33 : switch 2 - port 4 @ 2023-03-10 23:42:00"
+    # res += f"11:22:33:44:44:33 : switch 2 - port 4 @ 2023-03-10 23:42:00"
 
-    res += f"11:22:33:44:11:22 : switch 3 - port 1 @ 2023-03-10 23:48:01"
+    # res += f"11:22:33:44:11:22 : switch 3 - port 1 @ 2023-03-10 23:48:01"
 
-    res += f"11:11:22:44:44:44 : switch 3 - port 2 @ 2023-03-11 23:43:01"
+    # res += f"11:11:22:44:44:44 : switch 3 - port 2 @ 2023-03-11 23:43:01"
+
+    for key, value in controller.firstSeenAt.items():
+
+        res += f"{key} : {value[0]} @ {value[1]}\n"
 
     return htmlify(res, request, True)
 

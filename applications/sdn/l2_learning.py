@@ -178,6 +178,16 @@ class LearningSwitch (object):
 
         packet = event.parsed
 
+        mac_addr = packet.src
+
+        dpid = event.connection.dpid
+
+        received_port = event.port
+
+        where = f"switch {dpid} - port {received_port}"
+
+        core.controller.updatefirstSeenAt(mac_addr, where)
+
         def flood(message=None):
             """ Floods the packet """
 

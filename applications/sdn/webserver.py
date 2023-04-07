@@ -116,6 +116,8 @@ def macs():
 
             res += f"Port {port} - {ether}\n"
 
+        res += "\n"
+
     return htmlify(res, request, True)
 
 

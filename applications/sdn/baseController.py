@@ -68,7 +68,7 @@ class controller (object):
 
         self.devices[len(self.devices)] = l2_instance
 
-        #print(l2_instance.macToPort)
+        print(l2_instance.macToPort)
 
         return
 
@@ -107,9 +107,9 @@ class controller (object):
 
         """
 
-        for switch in self.devices.values():
+        for key, value in self.devices.items():
 
-            switch.table.clear()
+            value.macToPort = {}
 
         self.firstSeenAt.clear()
 

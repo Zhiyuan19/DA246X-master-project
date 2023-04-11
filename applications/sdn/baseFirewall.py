@@ -31,7 +31,28 @@ class Firewall (l2_learning.LearningSwitch):
     # You should call this function during the _handle_packetIn event to make the right decision for the incoming packet.
     def has_access(self, ip_packet, input_port):
         ### COMPLETE THIS PART ###
-        return True
+        from networkFirewalls import FW1,FW2
+        rules1 = FW1.rules
+        rules2 = FW2.rules
+
+        ### COMPLETE THIS PART ###
+        if ip_packet.type == pkt.IP_TYPE:
+            ip_phrase = ip_packet.payload
+            src_address = ip_phrase.srcip
+            dst_address = ip_phrase.dstip
+            protocol_packet = ip_phrase.protocol
+            if input_port.protocol == pkt.TCP_PROTOCOL:
+                tcp_phrase = input_port.payload
+                src_port = tcp_phrase.srcport
+                dst_port = tcp_phrase.dstport
+
+        # Compare the rules information and packet information
+        if ((rules1['protocol'] == (protocol_packet or 'any')) and (rules1['src_ip'] == (src_address or 'any')) and (rules1 ['dst_ip'] == (dst_address or 'any')) and (rules1['src_port'] == (src_port or 'any')) and (rules1['dstport'] == (dst_port or 'any')))or ((rules2['protocol'] == (protocol_packet or 'any')) and (rules2['src_ip'] == (src_address or 'any')) and (rules2 ['dst_ip'] == (dst_address or 'any')) and (rules2['src_port'] == (src_port or 'any')) and (rules2['dstport'] == (dst_port or 'any'))):
+            if rules1['action'] == 'allow' :
+                return True
+            else:
+                return False
+
 
     # On receiving a packet from dataplane, your firewall should process incoming event and apply the correct OF rule on the device.
 

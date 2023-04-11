@@ -50,6 +50,8 @@ from pox.lib.util import str_to_bool
 
 import time
 
+# from pox.lib.addresses import NetAddr, IPAddr
+
 
 log = core.getLogger()
 
@@ -176,6 +178,8 @@ class LearningSwitch (object):
 
         """
 
+        # check for firstSeenAt
+
         packet = event.parsed
 
         mac_addr = packet.src
@@ -187,6 +191,8 @@ class LearningSwitch (object):
         where = f"switch {dpid} - port {received_port}"
 
         core.controller.updatefirstSeenAt(mac_addr, where)
+
+        # finished checking for firstSeenAt
 
         def flood(message=None):
             """ Floods the packet """

@@ -22,6 +22,7 @@ import click_wrapper
 
 from l2_learning import LearningSwitch
 
+
 log = core.getLogger()
 
 
@@ -64,11 +65,27 @@ class controller (object):
 
         # For instance: self.devices[len(self.devices)] = fw
 
-        l2_instance = LearningSwitch(event.connection, False)
+        dpid = event.dpid
 
-        self.devices[len(self.devices)] = l2_instance
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4:
 
-        # print(l2_instance.macToPort)
+            l2_instance = LearningSwitch(event.connection, False)
+
+            self.devices[len(self.devices)] = l2_instance
+
+            # print(l2_instance.macToPort)
+
+        if dpid == 5:
+
+            fw1 = networkFirewalls.FW1(event.connection)
+
+            self.devices[len(self.devices)] = fw1
+
+        if dpid == 6:
+
+            fw2 = networkFirewalls.FW2(event.connection)
+
+            self.devices[len(self.devices)] = fw2
 
         return
 

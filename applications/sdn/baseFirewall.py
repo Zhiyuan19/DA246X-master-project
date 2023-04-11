@@ -1,18 +1,29 @@
 from pox.core import core
+
 import pox.openflow.libopenflow_01 as of
+
 from pox.lib.addresses import IPAddr
+
 import pox.lib.packet as pkt
+
 from forwarding import l2_learning
+
 log = core.getLogger()
 
 
 # This is the basic Firewall class which implements all features of your firewall!
+
 # For upcoming packets, you should decide if the packet is allowed to pass according to the firewall rules (which you have provided in networkFirewalls file during initialization.)
+
 # After processing packets you should install the correct OF rule on the device to threat similar packets the same way on dataplane (without forwarding packets to the controller) for a specific period of time.
 
+
 # rules format:
+
 # [input_HW_port, protocol, src_ip, src_port, dst_ip, dst_port, allow/block]
+
 # Checkout networkFirewalls.py file for detailed structure.
+
 
 class Firewall (l2_learning.LearningSwitch):
 
@@ -24,48 +35,156 @@ class Firewall (l2_learning.LearningSwitch):
 
         super(Firewall, self).__init__(connection, False)
 
+        self.name = name
+
+        self.connection = connection
+
         ### COMPLETE THIS PART ###
+
+    def subnet_check(self, subnet, ip):
+
+        if (subnet == 'any'):
+
+            return True
+
+        else:
+
+            addr_range, mask = subnet.split('/')
+
+            mask = int(mask)
+
+            check = ip.inNetwork((addr_range, mask))
+
+            return check
+
+    def protocol_check(self, rule, tcp_udp):
+
+        if rule == 'any':
+
+            return True
+
+        elif rule != tcp_udp:
+
+            return False
+
+    def tcp_port_check(self, rule, our_port):
+
+        if rule == 'any':
+
+            return True
+
+        elif rule != our_port:
+
+            return False
 
     # Check if the incoming packet should pass the firewall.
+
     # It returns a boolean as if the packet is allowed to pass the firewall or not.
+
     # You should call this function during the _handle_packetIn event to make the right decision for the incoming packet.
+
     def has_access(self, ip_packet, input_port):
-        ### COMPLETE THIS PART ###
-        from networkFirewalls import FW1,FW2
-        rules1 = FW1.rules
-        rules2 = FW2.rules
 
         ### COMPLETE THIS PART ###
-        if ip_packet.type == pkt.IP_TYPE:
-            ip_phrase = ip_packet.payload
-            src_address = ip_phrase.srcip
-            dst_address = ip_phrase.dstip
-            protocol_packet = ip_phrase.protocol
-            if input_port.protocol == pkt.TCP_PROTOCOL:
-                tcp_phrase = input_port.payload
-                src_port = tcp_phrase.srcport
-                dst_port = tcp_phrase.dstport
 
-        # Compare the rules information and packet information
-        if ((rules1['protocol'] == (protocol_packet or 'any')) and (rules1['src_ip'] == (src_address or 'any')) and (rules1 ['dst_ip'] == (dst_address or 'any')) and (rules1['src_port'] == (src_port or 'any')) and (rules1['dstport'] == (dst_port or 'any')))or ((rules2['protocol'] == (protocol_packet or 'any')) and (rules2['src_ip'] == (src_address or 'any')) and (rules2 ['dst_ip'] == (dst_address or 'any')) and (rules2['src_port'] == (src_port or 'any')) and (rules2['dstport'] == (dst_port or 'any'))):
-            if rules1['action'] == 'allow' :
+        ipp_payload = ip_packet.payload
+
+        tcp_udp = ""
+
+        tcp_src_port = -1
+
+        tcp_dst_port = -1
+
+        # check packet type
+
+        if ip_packet.find('tcp'):
+
+            tcp_udp = 'TCP'
+
+            tcp_src_port = ip_packet.find('tcp').srcport
+
+            tcp_dst_port = ip_packet.find('tcp').dstport
+
+        if ip_packet.find('udp'):
+
+            tcp_udp = 'UDP'
+
+        else:
+
+            tcp_udp = None
+
+        src_addr = ipp_payload.srcip
+
+        dst_addr = ipp_payload.dstip
+
+        for rule in self.rules:
+
+          # fw_hwport = rules[0]
+
+          # protocol = rules[1]
+
+          # source_subnet = rules[2]
+
+          # tcp_source_port = rules[3]
+
+          # destination_subnet = rules[4]
+
+          # tcp_dest_port = rules[5]
+
+          # allow_or_block = rules[6]
+
+            if rule[0] == input_port and self.protocol_check(rule[1], tcp_udp) and self.subnet_check(rule[2], src_addr) and self.tcp_port_check(rule[3], tcp_src_port) and self.subnet_check(rule[4], dst_addr) and self.tcp_port_check(rule[5], tcp_dst_port) and rule[6] == 'allow':
+
                 return True
-            else:
+
+            elif rule[6] == 'block':
+
                 return False
 
+        return True
 
     # On receiving a packet from dataplane, your firewall should process incoming event and apply the correct OF rule on the device.
 
     def _handle_PacketIn(self, event):
 
+        # check for firstSeenAt
+
         packet = event.parsed
+
+        mac_addr = packet.src
+
+        dpid = event.connection.dpid
+
+        received_port = event.port
+
+        where = f"switch {dpid} - port {received_port}"
+
+        core.controller.updatefirstSeenAt(mac_addr, where)
+
+        # finished checking for firstSeenAt
+
         if not packet.parsed:
+
             print(self.name, ": Incomplete packet received! controller ignores that")
+
             return
+
         ofp_msg = event.ofp
 
         ### COMPLETE THIS PART ###
+
+        if self.has_access(packet, event.port):
+
+            log.warning(f"{self.name} : Packet allowed by the Firewall!")
+
+        if not self.has_access(packet, event.port):
+
+            log.warning(f"{self.name} : Packet blocked by the Firewall!")
+
+            return
+
         print(packet)
+
         super(Firewall, self)._handle_PacketIn(event)
 
     # You are allowed to add more functions to this file as your need (e.g., a function for installing OF rules)

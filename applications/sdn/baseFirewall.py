@@ -63,9 +63,13 @@ class Firewall (l2_learning.LearningSwitch):
 
             return True
 
-        elif rule != tcp_udp:
+        if rule != tcp_udp:
 
             return False
+
+        else:
+
+            return True
 
     def tcp_port_check(self, rule, our_port):
 
@@ -73,9 +77,13 @@ class Firewall (l2_learning.LearningSwitch):
 
             return True
 
-        elif rule != our_port:
+        if rule != our_port:
 
             return False
+
+        else:
+
+            return True
 
     # Check if the incoming packet should pass the firewall.
 
@@ -145,6 +153,54 @@ class Firewall (l2_learning.LearningSwitch):
 
     # On receiving a packet from dataplane, your firewall should process incoming event and apply the correct OF rule on the device.
 
+    def install_allow(self, packet, received_port):
+
+        match_obj = of.ofp_match.from_packet(packet, received_port)
+
+        msg = of.ofp_flow_mod()
+
+        msg.match = match_obj
+
+        out_port = -1
+
+        # Only works for our topology, either port 1 or 2
+
+        if received_port == 1:
+
+            out_port = 2
+
+        if received_port == 2:
+
+            out_port = 1
+
+        msg.actions.append(of.ofp_action_output(port=out_port))
+
+        msg.idle_timeout = 10
+
+        msg.hard_timeout = 30
+
+        self.connection.send(msg)
+
+        return
+
+    def install_block(self, packet, received_port):
+
+        match_obj = of.ofp_match.from_packet(packet, received_port)
+
+        msg = of.ofp_flow_mod()
+
+        msg.match = match_obj
+
+        msg.idle_timeout = 10
+
+        msg.hard_timeout = 30
+
+        # msg.actions.append(of.ofp_action_output(port=of.OFPP_NONE)) useless
+
+        self.connection.send(msg)
+
+        return
+
     def _handle_PacketIn(self, event):
 
         # check for firstSeenAt
@@ -169,21 +225,27 @@ class Firewall (l2_learning.LearningSwitch):
 
             return
 
-        ofp_msg = event.ofp
-
         ### COMPLETE THIS PART ###
+
+        # ofp_msg = event.ofp
 
         if self.has_access(packet, event.port):
 
-            log.warning(f"{self.name} : Packet allowed by the Firewall!")
+            log.info(f"\n{self.name} : Packet allowed by the Firewall")
 
-        if not self.has_access(packet, event.port):
+            self.install_allow(packet, received_port)
 
-            log.warning(f"{self.name} : Packet blocked by the Firewall!")
+        else:
+
+            log.warning(f"\n{self.name} : Packet blocked by the Firewall!")
+
+            self.install_block(packet, received_port)
 
             return
 
         print(packet)
+
+        print("\n")
 
         super(Firewall, self)._handle_PacketIn(event)
 

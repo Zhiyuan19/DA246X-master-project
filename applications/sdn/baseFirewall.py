@@ -49,13 +49,19 @@ class Firewall (l2_learning.LearningSwitch):
 
         else:
 
-            addr_range, mask = subnet.split('/')
+            rule_ip, mask = subnet.split('/')
 
-            mask = int(mask)
+            ip_str = str(ip)
 
-            check = ip.inNetwork((addr_range, mask))
+            print(ip_str)
 
-            return check
+            if ip_str == rule_ip:
+
+                return True
+
+            else:
+
+                return False
 
     def protocol_check(self, rule, tcp_udp):
 
@@ -127,19 +133,19 @@ class Firewall (l2_learning.LearningSwitch):
 
         for rule in self.rules:
 
-          # fw_hwport = rules[0]
+            # fw_hwport = rules[0]
 
-          # protocol = rules[1]
+            # protocol = rules[1]
 
-          # source_subnet = rules[2]
+            # source_subnet = rules[2]
 
-          # tcp_source_port = rules[3]
+            # tcp_source_port = rules[3]
 
-          # destination_subnet = rules[4]
+            # destination_subnet = rules[4]
 
-          # tcp_dest_port = rules[5]
+            # tcp_dest_port = rules[5]
 
-          # allow_or_block = rules[6]
+            # allow_or_block = rules[6]
 
             if rule[0] == input_port and self.protocol_check(rule[1], tcp_udp) and self.subnet_check(rule[2], src_addr) and self.tcp_port_check(rule[3], tcp_src_port) and self.subnet_check(rule[4], dst_addr) and self.tcp_port_check(rule[5], tcp_dst_port) and rule[6] == 'allow':
 

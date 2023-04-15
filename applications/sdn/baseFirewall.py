@@ -49,7 +49,7 @@ class Firewall (l2_learning.LearningSwitch):
         if rule == 'any':
             return True
 
-        tcp_udp = 'TCP'or'UDP'
+        #tcp_udp = 'TCP'or'UDP' or None
         if rule != tcp_udp:
             return False 
             

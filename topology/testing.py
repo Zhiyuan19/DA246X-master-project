@@ -1,9 +1,14 @@
 import topology
 
 
-def ping(client, server, expected, count=1, wait=1):
+def ping(client, server, expected, count=1, wait=4):
 
-    cmd = f"ping {server} -c {count} -W {wait} >/dev/null 2>&1; echo $?"
+    ping_result = client.cmd(f'ping {server.IP()} -c 1 -w 4')
+    # print(ping_result)
+    # ping_result = client.cmd(f'ping {server.IP()} -c 1 -w 4')
+    # print(ping_result)
+
+    cmd = f"ping {server.IP()} -c {count} -W {wait} >/dev/null 2>&1; echo $?"
 
     ret = client.cmd(cmd)
 
@@ -15,11 +20,42 @@ def ping(client, server, expected, count=1, wait=1):
 
     # (consider both failures
 
-    # print("client", client)
+    print("client", client)
 
-    # print("server", server)
+    print("server", server)
 
     print("ret value:", ret)
+
+    if ret == 0:
+        return expected
+
+    else:
+        return False
+
+
+"""  previous implementation
+def ping(client, server, expected, count=1, wait=3):
+    print(server.IP())
+    print(client.IP())
+# tood: What if ping fails? How long does it take? Add a timeout to the command!
+
+    pingTest = client.cmd('ping %s -c 2 -w 5'%server.IP())
+    print(pingTest)
+
+ 
+    cmd = f"ping {server.IP()} -c {count} -W {wait} >/dev/null 2>&1; echo $?"
+    ret = client.cmd(cmd)
+
+    print(ret)
+    #tood: Here you should compare the return value "ret" with the expected value
+    # (consider both failures)
+    if ret.strip() == str(expected):
+        print("ping has worked!")
+        return True
+    else:
+        print("Not work")
+        return False
+    """
 
 
 def curl(client, server, method="GET", payload="", port=80, expected=True):

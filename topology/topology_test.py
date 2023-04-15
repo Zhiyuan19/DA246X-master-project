@@ -19,33 +19,54 @@ import testing
 
 topos = {'mytopo': (lambda: MyTopo())}
 
-
+"""
 def run_tests(net):
 
     # You can automate some tests here
 
     # TODO: How to get the hosts from the net??
 
-    hosts = net.hosts
+    hosts =net.hosts
 
     for host in hosts:
 
-        if host.IP() == '100.0.0.10':
+      if host.IP() == '100.0.0.10' :
+  
+         #print("HOST IP MATCHED")
 
-            a = host
+         a = host
 
-        elif host.IP() == '100.0.0.11':
+      
 
-            b = host
+      elif host.IP() == '100.0.0.11':
+         #print("HOST IP MATCHED")
 
-    print("a =", a.name, a.IP())
 
-    print("b =", b.name, b.IP())
+         b = host
+    
+
+    print("a =",a.name, a.IP())
+
+    print("b =",b.name, b.IP())
+  
 
     # Launch some tests
 
-    testing.ping(a, b, True)
+    testing.ping(a,b, True)
 
+    #testing.curl(h1, h2, expected=False)
+"""
+
+
+def run_tests(net):
+    # You can automate some tests here
+
+    # TODO: How to get the hosts from the net??
+    h1 = net.get('h1')
+    h2 = net.get('h2')
+
+    # Launch some tests
+    testing.ping(h1, h2, True)
     # testing.curl(h1, h2, expected=False)
 
 
@@ -86,7 +107,12 @@ if __name__ == "__main__":
     CLI(net)
 
     # You may need some commands before stopping the network! If you don't, leave it empty
-
     ### COMPLETE THIS PART ###
+
+    # Delete all links
+
+    for link in net.links:
+
+        net.delLink(link)
 
     net.stop()

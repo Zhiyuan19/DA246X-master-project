@@ -95,6 +95,28 @@ class Firewall (l2_learning.LearningSwitch):
             
         src_addr = ipp_payload.srcip
         dst_addr = ipp_payload.dstip
+
+
+                          	
+        #check for messages coming back to h3, h4
+        h3_ip = '100.0.0.50/24'
+        h4_ip = '100.0.0.51/24'
+        if (self.subnet_check(h3_ip, dst_addr) or self.subnet_check(h4_ip, dst_addr)) and not self.subnet_check(h3_ip, src_addr) and not self.subnet_check(h4_ip, src_addr):
+            
+            #check TCP 
+            tcp_packet = ip_packet.find('tcp')
+            if tcp_packet:
+                if tcp_packet.ACK:
+                    return True
+            
+            #check ICMP
+            icmp_packet = ip_packet.find('icmp')
+            if icmp_packet:
+                icmp_type = icmp_packet.type
+                if icmp_type == 0:
+                    #print("ping coming back to private zone")
+                    return True
+                          	
                           	
         for rule in self.rules:
             
@@ -131,8 +153,8 @@ class Firewall (l2_learning.LearningSwitch):
                 return False
        
 
-        print("NO CONDITIONS MATCHED")
-        return True
+        print("NO FIREWALL CONDITIONS MATCHED")
+        return False
 
     # On receiving a packet from dataplane, your firewall should process incoming event and apply the correct OF rule on the device.
     
@@ -190,11 +212,13 @@ class Firewall (l2_learning.LearningSwitch):
         
         if self.has_access(packet, event.port):
             log.info(f"\n{self.name} : Packet allowed by the Firewall")
-            #self.install_allow(packet, received_port)
+            self.install_allow(packet, received_port)
             
         else:
             log.warning(f"\n{self.name} : Packet blocked by the Firewall!")
-            #self.install_block(packet, received_port)
+            self.install_block(packet, received_port)
+            print(packet)
+            print("\n")
             return
         
         print(packet)

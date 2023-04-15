@@ -56,8 +56,11 @@ class Firewall (l2_learning.LearningSwitch):
             return True
             
     def tcp_port_check(self, rule, our_port):
+    
         if rule == 'any':
             return True
+            
+        our_port = str(our_port)    
             
         if rule != our_port:
             return False 
@@ -81,6 +84,7 @@ class Firewall (l2_learning.LearningSwitch):
             tcp_udp = 'TCP'
             tcp_src_port = ip_packet.find('tcp').srcport
             tcp_dst_port = ip_packet.find('tcp').dstport
+            
             
         if ip_packet.find('udp'):
             tcp_udp = 'UDP'

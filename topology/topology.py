@@ -98,6 +98,7 @@ def startup_services(net):
         print("[{}] Web server start:80".format(ser))
         net.get(ser).cmd("python3 -m http.server 80 &")
 
+
 topos = {'mytopo': (lambda: MyTopo())}
 
 

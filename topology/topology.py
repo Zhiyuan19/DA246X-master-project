@@ -94,6 +94,9 @@ def startup_services(net):
     # Start http services and executing commands you require on each host...
 
     ### COMPLETE THIS PART ###
+    for ser in ["ws1", "ws2", "ws3"]:
+        print("[{}] Web server start:80".format(ser))
+        net.get(ser).cmd("python3 -m http.server 80 &")
 
     pass
 

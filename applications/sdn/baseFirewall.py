@@ -48,7 +48,8 @@ class Firewall (l2_learning.LearningSwitch):
     def protocol_check(self, rule, tcp_udp):
         if rule == 'any':
             return True
-            
+
+        tcp_udp = 'TCP'or'UDP'
         if rule != tcp_udp:
             return False 
             

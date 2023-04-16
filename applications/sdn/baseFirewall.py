@@ -89,9 +89,6 @@ class Firewall (l2_learning.LearningSwitch):
             
         if ip_packet.find('udp'):
             tcp_udp = 'UDP'
-        
-        else:
-            tcp_udp = None 
             
         src_addr = ipp_payload.srcip
         dst_addr = ipp_payload.dstip

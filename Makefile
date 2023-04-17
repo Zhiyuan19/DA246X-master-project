@@ -7,13 +7,15 @@ topo:
 
 app:
 	@echo "starting the baseController!"
-# TODO: add path support
-	cd /opt/pox && python pox.py baseController
+	gnome-terminal -- python $(poxdir)/pox.py baseController
+
+test_prog:
+	@echo "starting mininet and test program!"
+	gnome-terminal -- sudo python ./topology/topology_test.py
 
 test:
-	@echo "starting test scenarios!"
-# TODO: verify	
-	python ./topology/testing.py
+	make app
+	make test_prog
 
 clean:
 	@echo "project files removed from pox directory!"

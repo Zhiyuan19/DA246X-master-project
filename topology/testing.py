@@ -3,6 +3,7 @@ from time import sleep
 
 
 
+
 def ping(client, server, expected, count=1, wait=1):
 
 
@@ -55,19 +56,13 @@ def ping(client, server, expected, count=1, wait=1):
 
 
 
-    if int(ret) == 0:
+    if (int(ret) == 0 and expected) or (int(ret) !=0 and expected == False):
 
-
-
-        print(client.name,"ping",server.name,"successfully")
-
-
+        print(client.name,"ping",server.name,f"working as expected, ping {str(expected)}")
 
     else:
 
-
-
-        print(client.name,"ping",server.name,"time out, failed!")
+        print(client.name,"ping",server.name,"NOT WORKING AS EXPECTED")
 
 
 
@@ -187,7 +182,7 @@ def curl(client, server, method="POST", payload="Group2", port=80, expected=True
 
 
 
-    if ret == "0":
+    if ret == "0" and expected == True :
 
 
 

@@ -1,0 +1,50 @@
+Script started on 2023-04-17 14:12:21+00:00 [TERM="xterm-256color" TTY="/dev/pts/10" COLUMNS="80" LINES="24"]
+[ws1] Web server start:80
+[ws2] Web server start:80
+[ws3] Web server start:80
+h1 100.0.0.10
+h2 100.0.0.11
+client h1
+server h2
+ret value: 0
+
+printing...
+h3 100.0.0.50
+h1 100.0.0.10
+client h3
+server h1
+ret value: 1
+
+h1 100.0.0.10
+h3 100.0.0.50
+client h1
+server h3
+ret value: 1
+
+h3 100.0.0.50
+h2 100.0.0.11
+client h3
+server h2
+ret value: 1
+
+h2 100.0.0.11
+h3 100.0.0.50
+client h2
+server h3
+ret value: 1
+
+h1 100.0.0.10
+ws1 100.0.0.40
+client h1
+server ws1
+ret value: 1
+
+h3 100.0.0.50
+ws1 100.0.0.40
+client h3
+server ws1
+ret value: 1
+
+`curl --connect-timeout 3 --max-time 3 -X POST -d 'Group2' -v -s 100.0.0.40:80/cgi-bin/index.cgi > /dev/null 2>&1; echo $? ` on h1 returned 0
+ret value: 0
+mininet> 

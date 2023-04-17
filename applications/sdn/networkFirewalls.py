@@ -62,4 +62,3 @@ class FW2 (Firewall):
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
             [2, 'any', 'any', 'any', 'any', 'any', 'allow']
         ]
-        ]

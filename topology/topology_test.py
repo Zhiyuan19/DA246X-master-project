@@ -124,18 +124,19 @@ def run_tests(net):
 
     testing.ping(h3, h1, True)
 
-    testing.ping(h1, h3, True)
+    testing.ping(h1, h3, False)
 
     testing.ping(h3, h2, True)
 
-    testing.ping(h2, h3, True)
+    testing.ping(h2, h3, False)
 
-    testing.ping(h1, ws1, True)
+    testing.ping(h1, ws1, False)
 
-    testing.ping(h3, ws1, True)
+    testing.ping(h3, ws1, False)
 
-    testing.curl(h1, ws1, expected=False)
-    testing.curl(h3, ws1, expected=False)
+    testing.curl(h1, ws1, expected=True)
+
+    testing.curl(h3, ws1, expected=True)
 
 
 

@@ -7,11 +7,11 @@ topo:
 
 app:
 	@echo "starting the baseController!"
-	gnome-terminal -- python $(poxdir)/pox.py baseController
+	gnome-terminal -- bash -c "script -f output_app.txt -c 'python $(poxdir)/pox.py baseController'"
 
 test_prog:
 	@echo "starting mininet and test program!"
-	gnome-terminal -- sudo python ./topology/topology_test.py
+	gnome-terminal -- bash -c "script -f output_test_prog.txt -c 'sudo python ./topology/topology_test.py'"
 
 test:
 	make app

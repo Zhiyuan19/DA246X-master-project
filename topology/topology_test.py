@@ -135,6 +135,7 @@ def run_tests(net):
     testing.ping(h3, ws1, True)
 
     testing.curl(h1, ws1, expected=False)
+    testing.curl(h3, ws1, expected=False)
 
 
 

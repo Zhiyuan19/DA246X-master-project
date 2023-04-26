@@ -1,18 +1,19 @@
 poxdir ?= /opt/pox/
 
-# Complete the makefile as you prefer!
+OUT_LOG_CTRL_PLANE="./results/output_app.txt"
+OUT_LOG_TEST_RESULT="./results/output_test_prog.txt"
+
 topo:
-	@echo "starting1 the topology! (i.e., running mininet)"
+	@echo "starting the topology! (i.e., running mininet)"
 	sudo python ./topology/topology.py
 
 app:
 	@echo "starting the baseController!"
-	gnome-terminal -- bash -c "script -f ./results/output_app.txt -c 'python $(poxdir)/pox.py baseController'"
+	python $(poxdir)/pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
 
 test_prog:
 	@echo "starting mininet and test program!"
-	gnome-terminal -- bash -c "script -f ./results/output_test_prog.txt -c 'sudo python ./topology/topology_test.py'"
-
+	sudo python ./topology/topology_test.py 2>&1 | tee ${OUT_LOG_TEST_RESULT}
 test:
 	make app
 	make test_prog

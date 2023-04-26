@@ -1,14 +1,13 @@
-Script started on 2023-04-17 14:54:56+00:00 [TERM="xterm-256color" TTY="/dev/pts/20" COLUMNS="80" LINES="24"]
 [ws1] Web server start:80
 [ws2] Web server start:80
 [ws3] Web server start:80
-h1 ping h2 successfully
-h3 ping h1 time out, failed!
-h1 ping h3 time out, failed!
-h3 ping h2 time out, failed!
-h2 ping h3 time out, failed!
-h1 ping ws1 time out, failed!
-h3 ping ws1 time out, failed!
+h1 ping h2 working as expected, ping True
+h3 ping h1 working as expected, ping True
+h1 ping h3 working as expected, ping False
+h3 ping h2 working as expected, ping True
+h2 ping h3 working as expected, ping False
+h1 ping ws1 working as expected, ping False
+h3 ping ws1 working as expected, ping False
 h1 http request ws1 successfully
 h3 http request ws1 successfully
 mininet> 

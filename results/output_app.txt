@@ -1,4 +1,3 @@
-Script started on 2023-04-17 14:54:55+00:00 [TERM="xterm-256color" TTY="/dev/pts/18" COLUMNS="80" LINES="24"]
 POX 0.7.0 (gar) / Copyright 2011-2020 James McCauley, et al.
  * Serving Flask app 'webserver'
  * Debug mode: off

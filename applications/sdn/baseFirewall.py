@@ -162,13 +162,17 @@ class Firewall (l2_learning.LearningSwitch):
         
         out_port = -1
         
-        #Only works for our topology, either port 1 or 2
-        if received_port == 1: 
-            out_port =2
+        #self.macToPort[]
+        dst_mac = packet.dst
         
-        if received_port == 2:
-            out_port =1 
+        if dst_mac in self.macToPort:
+            out_port = self.macToPort[dst_mac]
         
+        else:
+            out_port = of.OFPP_FLOOD 	                
+        
+        
+        print(f"Rule Installed on Output Port: {out_port}")
         msg.actions.append(of.ofp_action_output(port = out_port))
         msg.idle_timeout = 10
         msg.hard_timeout = 30

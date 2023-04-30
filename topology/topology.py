@@ -47,6 +47,8 @@ class MyTopo(Topo):
         ws2 = self.addHost('ws2', ip='100.0.0.41/24')
 
         ws3 = self.addHost('ws3', ip='100.0.0.42/24')
+        
+        insp = self.addHost('insp', ip='100.0.0.30/24')
 
         # Initial switches
 
@@ -61,6 +63,14 @@ class MyTopo(Topo):
         fw1 = self.addSwitch('fw1', dpid="5")
 
         fw2 = self.addSwitch('fw2', dpid="6")
+        
+        ib1 = self.addSwitch('ib1', dpid="7")
+
+        ids = self.addSwitch('ids', dpid="8")
+
+        napt = self.addSwitch('napt', dpid="9")
+
+
 
         # Defining links
 
@@ -74,13 +84,21 @@ class MyTopo(Topo):
 
         self.addLink(fw2, sw2)
 
-        self.addLink(sw4, sw2)
+        self.addLink(sw4, ib1)
+
+        self.addLink(ib1, ids)
+
+        self.addLink(ids, sw2)
+
+        self.addLink(ids, insp)
 
         self.addLink(h3, sw3)
 
         self.addLink(h4, sw3)
 
-        self.addLink(fw2, sw3)
+        self.addLink(fw2, napt)
+
+        self.addLink(napt,sw3)
 
         self.addLink(ws1, sw4)
 

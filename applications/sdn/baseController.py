@@ -67,7 +67,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4:
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 8 or dpid == 9:
 
             l2_instance = LearningSwitch(event.connection, False)
 

@@ -42,6 +42,19 @@ class controller (object):
 
         core.openflow.addListeners(self)
 
+        self.click_pids = {} 
+    
+
+    #Taken from Click Tutorial Video
+    def launch_click(self, dpid, name):
+        cmd = "sudo click forwarder.click &"
+        print("doing click command tings")
+        p = subprocess.Popen(cmd, shell=True)
+        log.info("Launched click for " +name+ "PID:" +str(p.pid))
+        self.click_pids[dpid] = p.pid
+
+
+
     def _handle_ConnectionUp(self, event):
         """
 
@@ -57,7 +70,7 @@ class controller (object):
 
         # In phase 2, you will need to run your network functions on the controller. Here is just an example how you can do it (Please ignore this for phase 1):
 
-        # click = click_wrapper.start_click("../nfv/forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
+        click = click_wrapper.start_click("../nfv/forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
 
         # For the webserver part, you might need a record of switches that are already connected to the controller.
 
@@ -67,7 +80,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 8 or dpid == 9:
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 8 :
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -86,6 +99,10 @@ class controller (object):
             fw2 = networkFirewalls.FW2(event.connection)
 
             self.devices[len(self.devices)] = fw2
+        
+        if dpid == 9:
+            log.info("Starting a Click process for %d" % event.dpid)
+            self.launch_click(event.dpid, "switch")
 
         return
 

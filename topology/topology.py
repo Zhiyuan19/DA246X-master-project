@@ -47,7 +47,7 @@ class MyTopo(Topo):
         ws2 = self.addHost('ws2', ip='100.0.0.41/24')
 
         ws3 = self.addHost('ws3', ip='100.0.0.42/24')
-        
+
         insp = self.addHost('insp', ip='100.0.0.30/24')
 
         # Initial switches
@@ -63,14 +63,12 @@ class MyTopo(Topo):
         fw1 = self.addSwitch('fw1', dpid="5")
 
         fw2 = self.addSwitch('fw2', dpid="6")
-        
-        ib1 = self.addSwitch('ib1', dpid="7")
 
-        ids = self.addSwitch('ids', dpid="8")
+        lb1 = self.addSwitch('lb1', dpid="7")  # load balancer
 
-        napt = self.addSwitch('napt', dpid="9")
+        ids = self.addSwitch('ids', dpid="8")  # ids
 
-
+        napt = self.addSwitch('napt', dpid="9")  # napt
 
         # Defining links
 
@@ -84,9 +82,9 @@ class MyTopo(Topo):
 
         self.addLink(fw2, sw2)
 
-        self.addLink(sw4, ib1)
+        self.addLink(sw4, lb1)
 
-        self.addLink(ib1, ids)
+        self.addLink(lb1, ids)
 
         self.addLink(ids, sw2)
 
@@ -98,7 +96,7 @@ class MyTopo(Topo):
 
         self.addLink(fw2, napt)
 
-        self.addLink(napt,sw3)
+        self.addLink(napt, sw3)
 
         self.addLink(ws1, sw4)
 
@@ -173,7 +171,5 @@ if __name__ == "__main__":
     # Delete all links
 
     for link in net.links:
-
         net.delLink(link)
-
     net.stop()

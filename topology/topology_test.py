@@ -116,9 +116,18 @@ def run_tests(net):
 
     ws3 = net.get('ws3')
 
+    insp = net.get('insp')
+
+    lb1 = net.get('lb1')
+
+    ids = net.get('ids')
+
+    napt = net.get('napt')
 
 
-    # Launch some tests
+
+
+# Launch some tests
 
     testing.ping(h1, h2, True)
 
@@ -137,6 +146,47 @@ def run_tests(net):
     testing.curl(h1, ws1, expected=True)
 
     testing.curl(h3, ws1, expected=True)
+
+
+
+    testing.curl(h1, insp, expected=True)
+
+    testing.curl(h1, lb1, expected=True)
+
+    testing.curl(h1, ids, expected=True)
+
+    testing.curl(h1, napt, expected=True)
+
+
+
+
+    testing.http_test(h1, "GET")
+
+    testing.http_test(h1, "POST")
+
+    testing.http_test(h1, "HEAD")
+
+    testing.http_test(h1, "OPTIONS")
+
+    testing.http_test(h1, "TRACE")
+
+    testing.http_test(h1, "PUT")
+
+    testing.http_test(h1, "DELETE")
+
+    testing.http_test(h1, "CONNECT")
+
+
+
+    testing.http_test_put(h1, "cat /etc/passwd ")
+
+    testing.http_test_put(h1, "cat /var/log/ ")
+
+    testing.http_test_put(h1, "INSERT")
+
+    testing.http_test_put(h1, "UPDATE")
+
+    testing.http_test_put(h1, "DELETE")
 
 
 

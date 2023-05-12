@@ -200,8 +200,8 @@ def curl(client, server, method="POST", payload="Group2", port=80, expected=True
 
     # return True  # True means "everyhing went as expected"
 
-def http_test(client, method)
-    cmd = f"curl --connect-timeout 3 --max-time 3 -X {method} -s 100.0.0.45 > /dev/null 2>&1; echo $? "
+def http_test(client, method, method2)
+    cmd = f"curl --connect-timeout 3 --max-time 3 -X {method} -s 100.0.0.45{method2} > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True :

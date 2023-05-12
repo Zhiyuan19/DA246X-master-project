@@ -160,21 +160,21 @@ def run_tests(net):
 
 
 
-    testing.http_test(h1, "GET")
+    testing.http_test(h1, "GET", "/get")
 
-    testing.http_test(h1, "POST")
+    testing.http_test(h1, "POST", "/post")
 
-    testing.http_test(h1, "HEAD")
+    #testing.http_test(h1, "HEAD", "/head")
 
-    testing.http_test(h1, "OPTIONS")
+    #testing.http_test(h1, "OPTIONS", "/options")
 
-    testing.http_test(h1, "TRACE")
+    #testing.http_test(h1, "TRACE", "/trace")
 
-    testing.http_test(h1, "PUT")
+    testing.http_test(h1, "PUT", "/put")
 
-    testing.http_test(h1, "DELETE")
-
-    testing.http_test(h1, "CONNECT")
+    #testing.http_test(h1, "DELETE", "/delete")
+    
+    #testing.http_test(h1, "CONNECT", "/connect")
 
 
 

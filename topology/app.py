@@ -12,11 +12,16 @@ def handle_post():
     return 'Received POST data:   ' +data + '\n'
 
 #GET request
-
+@app.route('/get', methods =[ 'GET' ])
+def handle_get():
+    print("GET Message")
+    return 'Received GET request\n'
 
 #PUT request
-
-
+def handle_put():
+    data = request.get_data(as_text = True)
+    print("PUT Message")
+    return 'Received PUT data:   ' +data+ '\n'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)

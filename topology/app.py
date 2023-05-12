@@ -18,6 +18,7 @@ def handle_get():
     return 'Received GET request\n'
 
 #PUT request
+@app.route('/put', methods =[ 'PUT' ])
 def handle_put():
     data = request.get_data(as_text = True)
     print("PUT Message")

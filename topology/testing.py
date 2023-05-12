@@ -220,3 +220,6 @@ def http_test_input(client, payload)
     if ret == "0" and expected == True :
         print(client.name,"http request", server.name,"successfully")
         return True
+    else:
+        print(client.name,"http request", server.name,"failed")
+        return False

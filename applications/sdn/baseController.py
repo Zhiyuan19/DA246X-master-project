@@ -46,15 +46,13 @@ class controller (object):
     
 
     #Taken from Click Tutorial Video
-    def launch_click(self, dpid, name):
-        cmd = "sudo click forwarder.click &"
-        print("doing click command tings")
+    def ids_launch_click(self, dpid, name):
+        cmd = "sudo click ids.click &"
+        print("Started Click")
         p = subprocess.Popen(cmd, shell=True)
-        log.info("Launched click for " +name+ "PID:" +str(p.pid))
-        self.click_pids[dpid] = p.pid
+        log.info("Launched click with PID:" +str(p.pid)+"\n")
 
-
-
+        
     def _handle_ConnectionUp(self, event):
         """
 
@@ -69,18 +67,14 @@ class controller (object):
         """
 
         # In phase 2, you will need to run your network functions on the controller. Here is just an example how you can do it (Please ignore this for phase 1):
-
-        click = click_wrapper.start_click("../nfv/forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
-
+        #click = click_wrapper.start_click("../nfv/forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
         # For the webserver part, you might need a record of switches that are already connected to the controller.
-
         # Please keep them in "devices".
-
         # For instance: self.devices[len(self.devices)] = fw
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 8 :
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 9 :
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -100,9 +94,9 @@ class controller (object):
 
             self.devices[len(self.devices)] = fw2
         
-        if dpid == 9:
-            log.info("Starting a Click process for %d" % event.dpid)
-            self.launch_click(event.dpid, "switch")
+        if dpid == 8:
+            log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
+            self.ids_launch_click(event.dpid, "switch")
 
         return
 

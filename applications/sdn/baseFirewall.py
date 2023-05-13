@@ -29,17 +29,16 @@ class Firewall (l2_learning.LearningSwitch):
         ### COMPLETE THIS PART ###
        
     def subnet_check(self, subnet, ip):
-        #print("subnet from rule is: "+ subnet)
-        #print('IP from packet is: ')
-        #print(ip)
+
+        #print(type(subnet))
+        #print(type(str(ip)))    
+        
         if subnet == 'any':
-            return True
+            return True       	        
         
         else:
             ip = str(ip)
-            subnet, mask = subnet.split("/")
-
-            if ip == subnet:
+            if ipaddress.ip_address(ip) in ipaddress.ip_network(subnet):
                 return True
             
             else:
@@ -96,24 +95,26 @@ class Firewall (l2_learning.LearningSwitch):
 
                           	
         #check for messages coming back to h3, h4
-        h3_ip = '100.0.0.50/24'
-        h4_ip = '100.0.0.51/24'
-        if (self.subnet_check(h3_ip, dst_addr) or self.subnet_check(h4_ip, dst_addr)) and not self.subnet_check(h3_ip, src_addr) and not self.subnet_check(h4_ip, src_addr):
-            
-            #check TCP 
+	
+        prz = '100.0.0.48/28'
+	    #h3_ip = '100.0.0.50/24'
+	    #h4_ip = '100.0.0.51/24'
+
+        #check TCP
+        if self.subnet_check(prz, dst_addr):
             tcp_packet = ip_packet.find('tcp')
             if tcp_packet:
                 if tcp_packet.ACK:
                     return True
-            
-            #check ICMP
-            icmp_packet = ip_packet.find('icmp')
-            if icmp_packet:
-                icmp_type = icmp_packet.type
-                if icmp_type == 0:
-                    #print("ping coming back to private zone")
-                    return True
-                          	
+
+        #check ICMP
+        icmp_packet = ip_packet.find('icmp')
+        if icmp_packet:
+            icmp_type = icmp_packet.type
+            if icmp_type == 0:
+                #print("ping coming back to private zone")
+                return True
+                          
                           	
         for rule in self.rules:
             

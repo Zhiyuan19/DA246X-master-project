@@ -214,7 +214,7 @@ def http_test(client, method, method2)
 
 
 def http_test_input(client, payload)
-    cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45 > /dev/null 2>&1; echo $? "
+    cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45\put > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True :

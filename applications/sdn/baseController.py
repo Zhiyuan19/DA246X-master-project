@@ -100,7 +100,7 @@ class controller (object):
 
         if dpid == 7:
             log.info("Starting click process for ib1 dpid = %d" % dpid)
-            p = click_wrapper.start_click("forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
+            p = click_wrapper.start_click("lb1.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
             log.info("Launched click with PID:" +str(p.pid)+"\n")
 #             ib1 = self.launch_click
 # lb1 does not exist

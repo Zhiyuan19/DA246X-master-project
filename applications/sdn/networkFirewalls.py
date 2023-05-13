@@ -31,9 +31,9 @@ class FW1 (Firewall):
 
         Firewall.__init__(self, connection, "FW1")
         self.rules = [
-            [1, 'TCP', 'any', 'any', '100.0.0.40/29', '80', 'allow'], # allow Pbz to DMC webserver
-            #[1, 'TCP', 'any', 'any', '100.0.0.41/24', '80', 'allow'], # allow Pbz to DMC webserver
-            #[1, 'TCP', 'any', 'any', '100.0.0.42/24', '80', 'allow'], # allow Pbz to DMC webserver
+            [1, 'TCP', 'any', 'any', '100.0.0.40/24', '80', 'allow'], # allow Pbz to DMC webserver
+            [1, 'TCP', 'any', 'any', '100.0.0.41/24', '80', 'allow'], # allow Pbz to DMC webserver
+            [1, 'TCP', 'any', 'any', '100.0.0.42/24', '80', 'allow'], # allow Pbz to DMC webserver
             #[1, 'TCP', 'any', 'any', '100.0.0.50/24', '80', 'allow'], # allow Pbz to Prz webserver
             #[1, 'TCP', 'any', 'any', '100.0.0.51/24', '80', 'allow'], # allow Pbz to Prz webserver
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
@@ -53,12 +53,12 @@ class FW2 (Firewall):
 
         Firewall.__init__(self, connection, "FW2")
         self.rules = [
-            [2, 'TCP', 'any', 'any', '100.0.0.40/29', '80', 'allow'], # allow Prz to DMC webserver
-            #[2, 'TCP', 'any', 'any', '100.0.0.41/24', '80', 'allow'], # allow Prz to DMC webserver
-            #[2, 'TCP', 'any', 'any', '100.0.0.42/24', '80', 'allow'], # allow Prz to DMC webserver
-            [2, 'any', 'any', 'any', '100.0.0.40/29', 'any', 'block'], # block Prz to DMC webserver incorrect way
-            #[2, 'any', 'any', 'any', '100.0.0.41/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
-            #[2, 'any', 'any', 'any', '100.0.0.42/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
+            [2, 'TCP', 'any', 'any', '100.0.0.40/24', '80', 'allow'], # allow Prz to DMC webserver
+            [2, 'TCP', 'any', 'any', '100.0.0.41/24', '80', 'allow'], # allow Prz to DMC webserver
+            [2, 'TCP', 'any', 'any', '100.0.0.42/24', '80', 'allow'], # allow Prz to DMC webserver
+            [2, 'any', 'any', 'any', '100.0.0.40/24', 'any', 'block'], # block Prz to DMC webserver incorrect way
+            [2, 'any', 'any', 'any', '100.0.0.41/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
+            [2, 'any', 'any', 'any', '100.0.0.42/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
             [2, 'any', 'any', 'any', 'any', 'any', 'allow']
         ]

@@ -9,7 +9,7 @@ topo:
 
 app:
 	@echo "starting the baseController!"
-	python $(poxdir)/pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
+	cd $(poxdir) && python ./pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
 
 test_prog:
 	@echo "starting mininet and test program!"

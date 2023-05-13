@@ -98,6 +98,14 @@ class controller (object):
             log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
             self.ids_launch_click(event.dpid, "switch")
 
+        if dpid == 7:
+            log.info("Starting click process for ib1 dpid = %d" % dpid)
+            p = click_wrapper.start_click("forwarder.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
+            log.info("Launched click with PID:" +str(p.pid)+"\n")
+#             ib1 = self.launch_click
+# lb1 does not exist
+#            self.devices[len(self.devices)] = lb1
+
         return
 
     # This should be called by each element in your application when a new source MAC is seen

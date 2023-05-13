@@ -205,10 +205,10 @@ def http_test(client, method, method2)
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True :
-        print(client.name,"http request", server.name,"successfully")
+        print(client.name,"http request", "successfully")
         return True
     else:
-        print(client.name,"http request", server.name,"failed")
+        print(client.name,"http request", "failed")
         return False
 
 
@@ -218,8 +218,8 @@ def http_test_input(client, payload)
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True :
-        print(client.name,"http request", server.name,"successfully")
+        print(client.name,"http request", "successfully")
         return True
     else:
-        print(client.name,"http request", server.name,"failed")
+        print(client.name,"http request", "failed")
         return False

@@ -2,6 +2,28 @@ clientInputCount, serverInputCount, clientOutputCount, serverOutputCount :: Aver
 arpReqCount, arpReqCount1, arpQueCount, arpQueCount1, ipCount, ipCount1, icmpCount,
 icmpCount1, dropCount, dropCount1, dropCount2, dropCount3 :: Counter;
 
+//CODE for IPChecksumFixer taken FROM COURSE DISCUSSIONS  #https://canvas.kth.se/courses/39067/discussion_topics/302524
+elementclass IPChecksumFixer{ $print |
+        input
+        ->SetIPChecksum
+        -> class::IPClassifier(tcp, udp, -)
+
+        class[0] -> Print(TCP, ACTIVE $print) -> SetTCPChecksum -> output
+        class[1] -> Print(UDP, ACTIVE $print) -> SetUDPChecksum -> output
+        class[2] -> Print(OTH, ACTIVE $print) -> output
+}
+
+//Use before passing to ToDevice
+elementclass FixedForwarder{ 
+         input
+        ->Strip(14)
+        ->SetIPChecksum
+        ->CheckIPHeader
+        ->IPChecksumFixer(0)
+        ->Unstrip(14)
+        ->output
+}
+
 fromClient :: FromDevice(lb1-eth1, METHOD LINUX, SNIFFER false);
 fromServer :: FromDevice(lb1-eth2, METHOD LINUX, SNIFFER false);
 
@@ -31,11 +53,11 @@ arpQuerierServer :: ARPQuerier(100.0.0.45, lb1-eth2);
 arpRespondClient :: ARPResponder(100.0.0.45 lb1-eth1);
 arpRespondServer :: ARPResponder(100.0.0.45 lb1-eth2);
 
-toClient :: Queue(1024) -> clientOutputCount -> toClientDevice;
-toServer :: Queue(1024) -> serverOutputCount -> toServerDevice;
+toClient :: Queue(1024) -> clientOutputCount -> FixedForwarder -> toClientDevice;
+toServer :: Queue(1024) -> serverOutputCount -> FixedForwarder -> toServerDevice;
 
-ipPacketClient :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierClient -> toClient;
-ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> toServer;
+ipPacketClient :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierClient -> FixedForwarder -> toClient;
+ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> FixedForwarder -> toServer;
 
 ipRewrite :: IPRewriter (roundRobin);
 
@@ -48,9 +70,9 @@ ipRewrite[0] -> ipPacketServer;
 ipRewrite[1] -> ipPacketClient;
 
 //from client
-fromClient -> clientInputCount -> clientClassifier;
+fromClient -> clientInputCount -> Print(INPUT_PACKET, -1) -> clientClassifier;
 
-clientClassifier[0] -> arpReqCount -> arpRespondClient -> toClient;
+clientClassifier[0] -> arpReqCount -> arpRespondClient -> FixedForwarder -> Print(OUT_PACKET, -1) -> toClient;
 clientClassifier[1] -> arpQueCount -> [1]arpQuerierClient;
 clientClassifier[2] -> ipCount -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;
 clientClassifier[3] -> dropCount1 -> Discard;
@@ -62,7 +84,7 @@ ipPacketClassifierClient[2] -> dropCount -> Discard;
 //from server
 fromServer -> serverInputCount -> serverClassifier;
 
-serverClassifier[0] -> arpReqCount1 -> arpRespondServer -> toServer;
+serverClassifier[0] -> arpReqCount1 -> arpRespondServer -> FixedForwarder -> toServer;
 serverClassifier[1] -> arpQueCount1 -> [1]arpQuerierServer;
 serverClassifier[2] -> ipCount1 -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
 serverClassifier[3] -> dropCount2 -> Discard;

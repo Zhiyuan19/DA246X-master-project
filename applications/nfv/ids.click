@@ -25,6 +25,9 @@ elementclass FixedForwarder{
 }
 
 
+switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
+switchARP, switchIP, serverARP, serverIP, httpPacket, putOptions, portOptions, toInsp, switchDrop, serverDrop :: Counter
+
 fromSWITCH :: FromDevice(ids-eth2, METHOD LINUX, SNIFFER false);
 fromSERVER :: FromDevice(ids-eth1, METHOD LINUX, SNIFFER false);
 toSWITCH :: Queue -> ToDevice(ids-eth2, METHOD LINUX);
@@ -69,18 +72,18 @@ search_PUT_keywords :: Search("\r\n\r\n")
 
 
 //Check Client Packet Type
-fromSWITCH -> clientPacketType;
-clientPacketType[0] -> FixedForwarder -> toSERVER;      							//ARP
-clientPacketType[1] -> Strip(14) -> CheckIPHeader -> /*Print(CLIENT_IP_PACKETS, -1)->*/ classify_HTTP_others;	//ip packets
-clientPacketType[2] -> Discard;											//others
+fromSWITCH -> switchInput -> clientPacketType;
+clientPacketType[0] -> switchARP -> FixedForwarder -> toSERVER;      							//ARP
+clientPacketType[1] -> switchIP -> Strip(14) -> CheckIPHeader -> /*Print(CLIENT_IP_PACKETS, -1)->*/ classify_HTTP_others;	//ip packets
+clientPacketType[2] -> switchDrop -> Discard;											//others
 
 //Check HTTP vs NON HTTP
 classify_HTTP_others[1] -> Unstrip(14) -> FixedForwarder -> toSERVER;                			        //non-http 
-classify_HTTP_others[0] -> Unstrip(14) -> /*Print(TO_HTTP_CLASSIFIER, -1) ->*/ classify_HTTPmethod;		//http
+classify_HTTP_others[0] -> httpPacket -> Unstrip(14) -> /*Print(TO_HTTP_CLASSIFIER, -1) ->*/ classify_HTTPmethod;		//http
 
 //Check HTTP Method
-classify_HTTPmethod[0] -> search_PUT_keywords;			//PUT, so we check keywords
-classify_HTTPmethod[1] -> FixedForwarder -> toSERVER;		//POST, pass on to server
+classify_HTTPmethod[0] -> putOptions -> search_PUT_keywords;			//PUT, so we check keywords
+classify_HTTPmethod[1] -> postOptions -> FixedForwarder -> toSERVER;		//POST, pass on to server
 classify_HTTPmethod[2] -> FixedForwarder -> toINSP;    		//Others, passed to INSP
 
 //If PUT, search for PUT data
@@ -95,12 +98,34 @@ classify_PUT_keywords[3] -> Unstrip(211) -> toINSP;
 classify_PUT_keywords[4] -> Unstrip(211) -> toINSP;
 classify_PUT_keywords[5] -> /*Print(BEFORE_UNSTRIP, -1) ->*/ Unstrip(211) ->Print(AFTER_UNSTRIP_TO_SERVER, -1) -> FixedForwarder -> toSERVER;
 
-
 //For the Server Side, check packet type forward accordingly
-fromSERVER -> serverPacketType;
-serverPacketType[0] -> FixedForwarder -> toSWITCH;
-serverPacketType[1] -> FixedForwarder -> toSWITCH;
-serverPacketType[2] -> Discard;
+fromSERVER -> serverInput -> serverPacketType;
+serverPacketType[0] -> serverARP -> FixedForwarder -> toSWITCH;
+serverPacketType[1] -> serverIP -> FixedForwarder -> toSWITCH;
+serverPacketType[2] -> serverDrop -> Discard;
+
+ DriverManager(wait , print > ../../results/ids.report  " 
+
+      =================== LB1 Report ===================
+      Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
+
+      Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))
+
+      Total # of   input packets:  $(add $(switchInput.count) $(serverInput.count))
+      Total # of  output packets:  $(add $(switchOutput.count) $(serverOutput.count))
+
+      Total # of   IP  packets:  $(add $(switchIP.count) $(serverIP.count))
+      Total # of   ARP  packets:  $(add $(switchARP.count) $(serverARP.count)) 
+      Total # of HTTP packets:  $(httpPacket.count) 
+
+      Total # of    PUT packets:  $(putOptions.count)
+      Total # of    POST packets:  $(postOptions.count) 
+
+      Total # of    to INSP packets: $(toInsp.count)
+      Total # of dropped packets:  $(add $(switchDrop.count) $(serverDrop.count))
+    =================================================
+
+ " , stop);
 
 
 

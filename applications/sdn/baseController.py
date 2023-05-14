@@ -46,7 +46,7 @@ class controller (object):
     
 
     #Taken from Click Tutorial Video
-    def ids_launch_click(self, dpid, name):
+    def ids_launch_click(self, dpid):
         cmd = "sudo click ids.click &"
         print("Started Click")
         p = subprocess.Popen(cmd, shell=True)
@@ -96,7 +96,7 @@ class controller (object):
         
         if dpid == 8:
             log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
-            self.ids_launch_click(event.dpid, "switch")
+            self.ids_launch_click(event.dpid)
 
         if dpid == 7:
             log.info("Starting click process for ib1 dpid = %d" % dpid)

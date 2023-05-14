@@ -91,12 +91,12 @@ search_PUT_keywords[0] -> /*Print(AFTER_SEARCH, -1) ->*/ classify_PUT_keywords;
 search_PUT_keywords[1] -> toINSP;
 
 //If Harmful keywords found, sent to INSP, otherwise send to SERVER
-classify_PUT_keywords[0] -> Unstrip(211) -> toINSP;
-classify_PUT_keywords[1] -> Unstrip(211) -> toINSP;
-classify_PUT_keywords[2] -> Unstrip(211) -> toINSP;
-classify_PUT_keywords[3] -> Unstrip(211) -> toINSP;
-classify_PUT_keywords[4] -> Unstrip(211) -> toINSP;
-classify_PUT_keywords[5] -> /*Print(BEFORE_UNSTRIP, -1) ->*/ Unstrip(211) ->Print(AFTER_UNSTRIP_TO_SERVER, -1) -> FixedForwarder -> toSERVER;
+classify_PUT_keywords[0] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[1] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[2] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[3] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[4] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[5] -> /*Print(BEFORE_UNSTRIP, -1) ->*/  UnstripAnno() -> Print(AFTER_UNSTRIP_TO_SERVER, -1) -> FixedForwarder -> toSERVER;
 
 //For the Server Side, check packet type forward accordingly
 fromSERVER -> serverInput -> serverPacketType;

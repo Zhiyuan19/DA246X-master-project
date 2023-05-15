@@ -20,7 +20,7 @@ def start_click(configuration, parameters, stdout="/tmp/click.out", stderr="/tmp
 
   # TODO: What do you want to do with the outputs?
   # Maybe you want them to a file? tee and > can be your friends!
-  redirect = ""
+  redirect = f"> {stdout} 2> {stderr}"
 
   cmd = f"sudo click {configuration} {redirect} &"
   print(f"Launching click with command {cmd}")
@@ -36,10 +36,11 @@ def start_click(configuration, parameters, stdout="/tmp/click.out", stderr="/tmp
 def handle_kill(sig, frame):
   # Instead of this, go through click_pids! We save them for a reason!
   print("Got kill signal. Notify all click processes")
-  subprocess.check_output(
-      "sudo killall -SIGTERM click || true", shell=True)
+  for pid in click_pids:
+        print(f"Killing Click Process with PID: {pid}")
+        subprocess.check_output(f"sudo kill {pid} || true", shell=True)
   exit(0)
+
 
 def killall_click():
   subprocess.check_output("sudo killall -SIGTERM click || true", shell=True)
-

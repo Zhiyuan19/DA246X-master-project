@@ -60,7 +60,6 @@ class FW2 (Firewall):
             [2, 'any', 'any', 'any', '100.0.0.40/29', 'any', 'block'], # block Prz to DMC webserver incorrect way
             #[2, 'any', 'any', 'any', '100.0.0.41/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
             #[2, 'any', 'any', 'any', '100.0.0.42/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
-            [2, 'any', 'any', 'any', '100.0.0.45/24', 'any', 'allow'], # allow Prz to virtual IP webserver
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
             [2, 'any', 'any', 'any', 'any', 'any', 'allow']
         ]

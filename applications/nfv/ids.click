@@ -30,8 +30,8 @@ switchARP, switchIP, serverARP, serverIP, httpPacket, putOptions, portOptions, t
 
 fromSWITCH :: FromDevice(ids-eth2, METHOD LINUX, SNIFFER false);
 fromSERVER :: FromDevice(ids-eth1, METHOD LINUX, SNIFFER false);
-toSWITCH :: Queue -> ToDevice(ids-eth2, METHOD LINUX);
-toSERVER :: Queue  -> ToDevice(ids-eth1, METHOD LINUX);
+toSWITCH :: Queue -> switchOutput -> ToDevice(ids-eth2, METHOD LINUX);
+toSERVER :: Queue -> serverOutput-> ToDevice(ids-eth1, METHOD LINUX);
 toINSP :: Queue -> ToDevice(ids-eth3, METHOD LINUX);
 
 serverPacketType, clientPacketType :: Classifier(
@@ -84,7 +84,7 @@ classify_HTTP_others[0] -> httpPacket -> Unstrip(14) -> /*Print(TO_HTTP_CLASSIFI
 //Check HTTP Method
 classify_HTTPmethod[0] -> putOptions -> search_PUT_keywords;			//PUT, so we check keywords
 classify_HTTPmethod[1] -> postOptions -> FixedForwarder -> toSERVER;		//POST, pass on to server
-classify_HTTPmethod[2] -> FixedForwarder -> toINSP;    		//Others, passed to INSP
+classify_HTTPmethod[2] -> toInput-> FixedForwarder -> toINSP;    		//Others, passed to INSP
 
 //If PUT, search for PUT data
 search_PUT_keywords[0] -> /*Print(AFTER_SEARCH, -1) ->*/ classify_PUT_keywords;
@@ -106,7 +106,7 @@ serverPacketType[2] -> serverDrop -> Discard;
 
  DriverManager(wait , print > ../../results/ids.report  " 
 
-      =================== LB1 Report ===================
+      =================== IDS Report ===================
       Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
 
       Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))

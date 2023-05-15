@@ -37,7 +37,9 @@ class controller (object):
     firstSeenAt = dict()
 
     def __init__(self):
-
+        
+        signal.signal(signal.SIGINT, click_wrapper.handle_kill)
+        
         webserver.webserver(self)
 
         core.openflow.addListeners(self)
@@ -45,12 +47,12 @@ class controller (object):
         self.click_pids = {} 
     
 
-    #Taken from Click Tutorial Video
-    def ids_launch_click(self, dpid):
-        cmd = "sudo click ids.click &"
-        print("Started Click")
-        p = subprocess.Popen(cmd, shell=True)
-        log.info("Launched click with PID:" +str(p.pid)+"\n")
+    #Not using, Taken from Click Tutorial Video
+    #def ids_launch_click(self, dpid):
+    #    cmd = "sudo click ids.click &"
+    #    print("Started Click")
+    #    p = subprocess.Popen(cmd, shell=True)
+    #    log.info("Launched click with PID:" +str(p.pid)+"\n")
 
         
     def _handle_ConnectionUp(self, event):
@@ -96,12 +98,15 @@ class controller (object):
         
         if dpid == 8:
             log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
-            self.ids_launch_click(event.dpid)
+            #Make the folder ids_tmp in opt/pox/ext
+            p = click_wrapper.start_click("/opt/pox/ext/ids.click", -1, "/opt/pox/ext/ids_tmp/ids.out", "/opt/pox/ext/ids_tmp/ids.err" )
+            #self.ids_launch_click(event.dpid)
+            #log.info("Launched click with PID:" +str(p.pid)+"\n")
 
-        if dpid == 7:
-            log.info("Starting click process for ib1 dpid = %d" % dpid)
-            p = click_wrapper.start_click("lb1.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
-            log.info("Launched click with PID:" +str(p.pid)+"\n")
+       #if dpid == 7:
+        #   log.info("Starting click process for ib1 dpid = %d" % dpid)
+        #   p = click_wrapper.start_click("lb1.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
+        #   log.info("Launched click with PID:" +str(p.pid)+"\n")
 #             ib1 = self.launch_click
 # lb1 does not exist
 #            self.devices[len(self.devices)] = lb1

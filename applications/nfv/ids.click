@@ -73,12 +73,12 @@ search_PUT_keywords :: Search("\r\n\r\n")
 
 //Check Client Packet Type
 fromSWITCH -> switchInput -> clientPacketType;
-clientPacketType[0] -> switchARP -> FixedForwarder -> toSERVER;      							//ARP
+clientPacketType[0] -> switchARP -> FixedForwarder -> toSERVER;      								//ARP
 clientPacketType[1] -> switchIP -> Strip(14) -> CheckIPHeader -> /*Print(CLIENT_IP_PACKETS, -1)->*/ classify_HTTP_others;	//ip packets
 clientPacketType[2] -> switchDrop -> Discard;											//others
 
 //Check HTTP vs NON HTTP
-classify_HTTP_others[1] -> Unstrip(14) -> FixedForwarder -> toSERVER;                			        //non-http 
+classify_HTTP_others[1] -> Unstrip(14) -> FixedForwarder -> toSERVER;                			        		//non-http 
 classify_HTTP_others[0] -> httpPacket -> Unstrip(14) -> /*Print(TO_HTTP_CLASSIFIER, -1) ->*/ classify_HTTPmethod;		//http
 
 //Check HTTP Method
@@ -91,11 +91,11 @@ search_PUT_keywords[0] -> /*Print(AFTER_SEARCH, -1) ->*/ classify_PUT_keywords;
 search_PUT_keywords[1] -> toINSP;
 
 //If Harmful keywords found, sent to INSP, otherwise send to SERVER
-classify_PUT_keywords[0] -> UnstripAnno() -> toINSP;
-classify_PUT_keywords[1] -> UnstripAnno() -> toINSP;
-classify_PUT_keywords[2] -> UnstripAnno() -> toINSP;
-classify_PUT_keywords[3] -> UnstripAnno() -> toINSP;
-classify_PUT_keywords[4] -> UnstripAnno() -> toINSP;
+classify_PUT_keywords[0] -> UnstripAnno() -> FixedForwarder -> toINSP;
+classify_PUT_keywords[1] -> UnstripAnno() -> FixedForwarder -> toINSP;
+classify_PUT_keywords[2] -> UnstripAnno() -> FixedForwarder -> toINSP;
+classify_PUT_keywords[3] -> UnstripAnno() -> FixedForwarder -> toINSP;
+classify_PUT_keywords[4] -> UnstripAnno() -> FixedForwarder -> toINSP;
 classify_PUT_keywords[5] -> /*Print(BEFORE_UNSTRIP, -1) ->*/  UnstripAnno() -> Print(AFTER_UNSTRIP_TO_SERVER, -1) -> FixedForwarder -> toSERVER;
 
 //For the Server Side, check packet type forward accordingly
@@ -104,7 +104,7 @@ serverPacketType[0] -> serverARP -> FixedForwarder -> toSWITCH;
 serverPacketType[1] -> serverIP -> FixedForwarder -> toSWITCH;
 serverPacketType[2] -> serverDrop -> Discard;
 
- DriverManager(wait , print > ../../results/ids.report  " 
+ DriverManager(wait , print > ids.report  " 
 
       =================== IDS Report ===================
       Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
@@ -126,7 +126,6 @@ serverPacketType[2] -> serverDrop -> Discard;
     =================================================
 
  " , stop);
-
 
 
 

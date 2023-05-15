@@ -26,7 +26,7 @@ elementclass FixedForwarder{
 
 
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
-switchARP, switchIP, serverARP, serverIP, httpPacket, putOptions, portOptions, toInsp, switchDrop, serverDrop :: Counter
+switchARP, switchIP, serverARP, serverIP, httpPacket, putOptions, postOptions, toInsp, switchDrop, serverDrop :: Counter
 
 fromSWITCH :: FromDevice(ids-eth2, METHOD LINUX, SNIFFER false);
 fromSERVER :: FromDevice(ids-eth1, METHOD LINUX, SNIFFER false);
@@ -84,7 +84,7 @@ classify_HTTP_others[0] -> httpPacket -> Unstrip(14) -> /*Print(TO_HTTP_CLASSIFI
 //Check HTTP Method
 classify_HTTPmethod[0] -> putOptions -> search_PUT_keywords;			//PUT, so we check keywords
 classify_HTTPmethod[1] -> postOptions -> FixedForwarder -> toSERVER;		//POST, pass on to server
-classify_HTTPmethod[2] -> toInput-> FixedForwarder -> toINSP;    		//Others, passed to INSP
+classify_HTTPmethod[2] -> toInsp-> FixedForwarder -> toINSP;    		//Others, passed to INSP
 
 //If PUT, search for PUT data
 search_PUT_keywords[0] -> /*Print(AFTER_SEARCH, -1) ->*/ classify_PUT_keywords;

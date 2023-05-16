@@ -55,6 +55,11 @@ class controller (object):
     #    print("Started Click")
     #    p = subprocess.Popen(cmd, shell=True)
     #    log.info("Launched click with PID:" +str(p.pid)+"\n")
+    def napt_lauch_click(self, dpid, name):
+        cmd = "sudo click napt.click &"
+        print("started napt")
+        p = subprocess.Popen(cmd, shell=True)
+        log.info("Launched click with PID:" +str(p.pid)+"\n")
 
         
     def _handle_ConnectionUp(self, event):
@@ -78,7 +83,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7 or dpid == 9 :
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7:
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -104,6 +109,10 @@ class controller (object):
             p = click_wrapper.start_click("/opt/pox/ext/ids.click", -1, "/opt/pox/ext/ids_tmp/ids.out", "/opt/pox/ext/ids_tmp/ids.err" )
             #self.ids_launch_click(event.dpid)
             #log.info("Launched click with PID:" +str(p.pid)+"\n")
+            
+        if dpid == 9:
+            log.info("\nStarting a Click process for napt Switch %d" % event.dpid)
+            self.napt_lauch_click(event.dpid, "switch")
 
        #if dpid == 7:
         #   log.info("Starting click process for ib1 dpid = %d" % dpid)

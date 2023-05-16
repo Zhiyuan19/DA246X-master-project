@@ -50,7 +50,7 @@ class MyTopo(Topo):
 
         insp = self.addHost('insp', ip='100.0.0.30/24')
 
-        lb1 = self.addHost('lb1', ip='100.0.0.45/24')
+        #lb1 = self.addHost('lb1', ip='100.0.0.45/24')
         # Initial switches
 
         sw1 = self.addSwitch('sw1', dpid="1")

@@ -37,10 +37,9 @@ class MyTopo(Topo):
         h1 = self.addHost('h1', ip='100.0.0.10/24')
 
         h2 = self.addHost('h2', ip='100.0.0.11/24')
-
-        h3 = self.addHost('h3', ip='100.0.0.50/24')
-
-        h4 = self.addHost('h4', ip='100.0.0.51/24')
+        
+        h3 = self.addHost('h3', ip='10.0.0.50/24')
+        h4 = self.addHost('h4', ip='10.0.0.51/24')
 
         ws1 = self.addHost('ws1', ip='100.0.0.40/24')
 
@@ -162,6 +161,8 @@ if __name__ == "__main__":
     startup_services(net)
 
     # Start the network
+    net.get("h3").cmd("ip route add default via 10.0.0.1")
+    net.get("h4").cmd("ip route add default via 10.0.0.1")
 
     net.start()
 

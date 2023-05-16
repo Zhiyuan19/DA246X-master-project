@@ -89,6 +89,8 @@ class Firewall (l2_learning.LearningSwitch):
             
         if ip_packet.find('udp'):
             tcp_udp = 'UDP'
+        
+        
             
         src_addr = ipp_payload.srcip
         dst_addr = ipp_payload.dstip
@@ -212,17 +214,19 @@ class Firewall (l2_learning.LearningSwitch):
         
         ### COMPLETE THIS PART ###
         #ofp_msg = event.ofp
+        ip_or_not = packet.find('ipv4')
         
-        if self.has_access(packet, event.port):
-            log.info(f"\n{self.name} : Packet allowed by the Firewall")
-            self.install_allow(packet, received_port)
+        if ip_or_not: 
+            if self.has_access(packet, event.port):
+                log.info(f"\n{self.name} : Packet allowed by the Firewall")
+                self.install_allow(packet, received_port)
             
-        else:
-            log.warning(f"\n{self.name} : Packet blocked by the Firewall!")
-            self.install_block(packet, received_port)
-            print(packet)
-            print("\n")
-            return
+            else:
+                log.warning(f"\n{self.name} : Packet blocked by the Firewall!")
+                self.install_block(packet, received_port)
+                print(packet)
+                print("\n")
+                return
         
         print(packet)
         print("\n")

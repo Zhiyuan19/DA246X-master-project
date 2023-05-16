@@ -37,9 +37,10 @@ class MyTopo(Topo):
         h1 = self.addHost('h1', ip='100.0.0.10/24')
 
         h2 = self.addHost('h2', ip='100.0.0.11/24')
-        
-        h3 = self.addHost('h3', ip='10.0.0.50/24')
-        h4 = self.addHost('h4', ip='10.0.0.51/24')
+
+        h3 = self.addHost('h3', ip='100.0.0.50/24')
+
+        h4 = self.addHost('h4', ip='100.0.0.51/24')
 
         ws1 = self.addHost('ws1', ip='100.0.0.40/24')
 
@@ -64,7 +65,7 @@ class MyTopo(Topo):
 
         fw2 = self.addSwitch('fw2', dpid="6")
 
-        lb1 = self.addSwitch('lb1', dpid="7")  # load balancer
+        lb = self.addSwitch('lb', dpid="7")  # load balancer
 
         ids = self.addSwitch('ids', dpid="8")  # ids
 
@@ -82,9 +83,9 @@ class MyTopo(Topo):
 
         self.addLink(fw2, sw2)
 
-        self.addLink(sw4, lb1)
+        self.addLink(sw4, lb)
 
-        self.addLink(lb1, ids)
+        self.addLink(lb, ids)
 
         self.addLink(ids, sw2)
 
@@ -161,8 +162,6 @@ if __name__ == "__main__":
     startup_services(net)
 
     # Start the network
-    net.get("h3").cmd("ip route add default via 10.0.0.1")
-    net.get("h4").cmd("ip route add default via 10.0.0.1")
 
     net.start()
 

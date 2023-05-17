@@ -1,81 +1,106 @@
-//counters
-fromPrz, toPrz, fromDmz, toDmz :: AverageCounter;
-arpRespondInt, arpRespondExt, arpQueryInt, arpQueryExt, icmpExt, icmpInt, tcpInt, dropInt, dropExt, icmpEchoDropInt, icmpEchoDropExt, icmpReplyDropInt, icmpReplyDropExt :: Counter;
-// 2 variables to hold ports names
+//counter
+fromPrzCt, toPrzCt, fromDmzCt, toDmzCt :: AverageCounter;
+arpRespondIntCt, arpRespondExtCt, arpQueryIntCt, arpQueryExtCt, icmpExtCt, icmpIntCt, tcpIntCt, dropIntCt, dropExtCt, icmpEchoDropIntCt, icmpEchoDropExtCt, icmpReplyDropIntCt, icmpReplyDropExtCt :: Counter;
+
+//
 define($PORT1 napt-eth1, $PORT2 napt-eth2)
 
-//from where to receive packets
-FromInternal :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
-FromExternal :: FromDevice($PORT1, METHOD LINUX, SNIFFER false);
+//defination
 
-//where to send packets
-ToInternal :: ToDevice($PORT2)
-ToExternal :: ToDevice($PORT1)
+fromInt :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
+fromExt :: FromDevice($PORT1, METHOD LINUX, SNIFFER false);
+toInt :: Queue -> toPrzCt -> ToDevice($PORT2);
+toExt :: Queue -> toDmzCt -> ToDevice($PORT1);
 
-//ARP
-ArpReplyInternal :: ARPResponder(10.0.0.1 $PORT2);
-ArpReplyExternal :: ARPResponder(100.0.0.1 $PORT1);
+arpReplyIntern :: ARPResponder(10.0.0.1 10.0.0.0/24 9e-a3-ec-98-af-25);
+arpReplyExtern :: ARPResponder(100.0.0.1 100.0.0.0/24 3e-b6-37-4f-63-8e);
 
-ArpRequestInternal :: ARPQuerier(10.0.0.1, $PORT2);
-ArpRequestExternal :: ARPQuerier(100.0.0.1, $PORT1);
+arpRequestIntern :: ARPQuerier(10.0.0.1, 9e-a3-ec-98-af-25);	
+arpRequestExtern :: ARPQuerier(100.0.0.1, 3e-b6-37-4f-63-8e);
+
+
 
 IpNAT :: IPRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 IcmpNAT :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 
-PacketClassifierInternal, PacketClassifierExternal :: Classifier(
+
+packetClassifierInt, packetClassifierExt :: Classifier(
+
     12/0806 20/0001, //ARP request
+
     12/0806 20/0002, //ARP respond
+
     12/0800, //IP
+
     - //rest
+
 )
 
-IpClassifierInternal, IpClassifierExternal :: IPClassifier(
+
+
+ipClassifierInt, ipClassifierExt :: IPClassifier(
+
     tcp,
+
     icmp type echo,
+
     icmp type echo-reply,
+
     -
+
 )
 
-FromInternal -> fromPrz -> PacketClassifierInternal;
-PacketClassifierInternal[0] -> arpQueryInt -> ArpReplyInternal -> Tointern :: Queue -> toPrz -> ToInternal;
-PacketClassifierInternal[1] -> arpRespondInt -> [1]ArpRequestInternal;
-PacketClassifierInternal[2] -> Strip(14) -> CheckIPHeader -> IpClassifierInternal;
-PacketClassifierInternal[3] -> dropInt -> Discard;
 
 
-IpClassifierInternal[0] -> tcpInt -> IpNAT[0] -> [0]ArpRequestExternal -> toExtern :: Queue -> toDmz ->ToExternal;
-IpClassifierInternal[1] -> icmpInt -> IcmpNAT[0] -> [0]ArpRequestExternal-> toExtern :: Queue -> toDmz -> ToExternal;
-IpClassifierInternal[2] -> icmpEchoDropInt -> Discard;
-IpClassifierInternal[3] -> icmpReplyDropInt -> Discard;
+fromInt -> fromPrzCt -> packetClassifierInt;
 
-FromExternal -> fromDmz -> PacketClassifierExternal;
-PacketClassifierExternal[0] -> arpQueryExt -> ArpReplyExternal -> toExtern :: Queue -> toDmz ->ToExternal;
-PacketClassifierExternal[1] -> arpRespondExt -> [1]ArpRequestExternal;
-PacketClassifierExternal[2] -> Strip(14) -> CheckIPHeader -> IpClassifierExternal
-PacketClassifierExternal[3] -> dropExt -> Discard;
+packetClassifierInt[0] -> arpQueryIntCt -> arpReplyIntern -> toInt;
 
-IpClassifierExternal[0] -> IpNAT[1] -> [0]ArpRequestInternal -> Tointern :: Queue -> toPrz -> ToInternal;
-IpClassifierExternal[1] -> icmpEchoDropExt -> Discard;
-IpClassifierExternal[2] -> icmpExt -> IcmpNAT[1] -> [0]ArpRequestInternal -> Tointern :: Queue -> toPrz -> ToInternal;
-IpClassifierExternal[3] -> icmpReplyDropExt -> Discard;
+packetClassifierInt[1] -> arpRespondIntCt  -> [1]arpRequestIntern;
+
+packetClassifierInt[2] -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
+
+packetClassifierInt[3] -> dropIntCt  -> Discard;
 
 
 
 
-DriverManager(wait, print > ../../results/napt.report "
-        ===================== NAPT Report ====================
-        Input Packet Rate (pps): $(add $(fromPrz.rate) $(fromDmz.rate))
-        Output Packet Rate(pps): $(add $(toPrz.rate) $(toDmz.rate))
 
-        Total # of input packets: $(add $(fromPrz.count) $(fromDmz.count))
-        Total # of output packets: $(add $(toPrz.count) $(toDmz.count))
+ipClassifierInt[0] -> tcpIntCt -> IpNAT[0] -> [0]arpRequestExtern -> toExt;
 
-        Total # of ARP request packets: $(add $(arpQueryInt.count) $(arpQueryExt.count))
-        Total # of ARP reply packets: $(add $(arpRespondInt.count) $(arpRespondExt.count))
+ipClassifierInt[1] -> icmpIntCt -> IcmpNAT[0] -> [0]arpRequestExtern -> toExt;
 
-        Total # of service requests packets: $(add $(tcpInt.count))
-        Total # of ICMP packets: $(add $(icmpInt.count) $(icmpExt.count))
-        Total # of dropped packets: $(add $(dropInt.count) $(dropExt.count) $(icmpEchoDropInt.count) $(icmpEchoDropExt.count) $(icmpReplyDropInt.count) $(icmpReplyDropExt.count))
-        ======================================================",
-        stop);
+ipClassifierInt[2] -> icmpEchoDropIntCt -> Discard;
+
+ipClassifierInt[3] -> icmpReplyDropIntCt -> Discard;
+
+
+
+fromExt -> fromDmzCt -> packetClassifierExt;
+
+packetClassifierExt[0] -> arpQueryExtCt -> arpReplyExtern -> toExt;
+
+packetClassifierExt[1] -> arpRespondExtCt -> [1]arpRequestExtern;
+
+packetClassifierExt[2] -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
+
+packetClassifierExt[3] -> dropExtCt -> Discard;
+
+
+
+ipClassifierExt[0] -> IpNAT[1] -> [0]arpRequestIntern -> toInt;
+
+ipClassifierExt[1] -> icmpEchoDropExtCt -> Discard;
+
+ipClassifierExt[2] -> icmpExtCt -> IcmpNAT[1] -> [0]arpRequestIntern -> toInt;
+
+ipClassifierExt[3] -> icmpReplyDropExtCt  -> Discard;
+
+
+
+
+
+
+
+
 

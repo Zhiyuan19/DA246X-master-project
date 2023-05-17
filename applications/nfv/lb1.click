@@ -1,6 +1,6 @@
-clientInputCount, serverInputCount, clientOutputCount, serverOutputCount :: AverageCounter;
-arpReqCount, arpReqCount1, arpQueCount, arpQueCount1, ipCount, ipCount1, icmpCount,
-icmpCount1, dropCount, dropCount1, dropCount2, dropCount3 :: Counter;
+//smh
+//lb-eth2<->ids-eth1 (OK OK) FROM 		CLIENTS  lb-eth2
+//sw4-eth1<->lb-eth1 (OK OK) TO 		SERVERS  lb-eth1
 
 //CODE for IPChecksumFixer taken FROM COURSE DISCUSSIONS  #https://canvas.kth.se/courses/39067/discussion_topics/302524
 elementclass IPChecksumFixer{ $print |
@@ -16,22 +16,33 @@ elementclass IPChecksumFixer{ $print |
 //Use before passing to ToDevice
 elementclass FixedForwarder{ 
          input
+        -> Print(BEFORESTRIP, -1) 
         ->Strip(14)
+        ->Print(BEFORECHECKSUM, -1)		
         ->SetIPChecksum
+        //->Print(AFTERCHECKSUM, -1)
         ->CheckIPHeader
         ->IPChecksumFixer(0)
         ->Unstrip(14)
         ->output
 }
 
-fromClient :: FromDevice(lb1-eth1, METHOD LINUX, SNIFFER false);
-fromServer :: FromDevice(lb1-eth2, METHOD LINUX, SNIFFER false);
 
-toServerDevice :: ToDevice(lb1-eth2, METHOD LINUX);
-toClientDevice :: ToDevice(lb1-eth1, METHOD LINUX);
+/*
+clientInputCount, serverInputCount, clientOutputCount, serverOutputCount :: AverageCounter;
+arpReqCount, arpReqCount1, arpQueCount, arpQueCount1, ipCount, ipCount1, icmpCount,
+icmpCount1, dropCount, dropCount1, dropCount2, dropCount3 :: Counter;*/
+
+fromClient :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);
+fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
+toServerDevice :: ToDevice(lb-eth1, METHOD LINUX);
+toClientDevice :: ToDevice(lb-eth2, METHOD LINUX);
+
+toServer :: /*FixedForwarder ->*/ Queue(1024) -> toServerDevice;
+toClient :: /*FixedForwarder ->*/ Queue(1024) -> toClientDevice;
 
 clientClassifier, serverClassifier :: Classifier(
-    12/0806 20/0001, //ARP requrest
+    12/0806 20/0001, //ARP request
     12/0806 20/0002, //ARP respond
     12/0800, //IP
     - ); //others
@@ -48,16 +59,14 @@ ipPacketClassifierServer :: IPClassifier(
 
 
 
-arpQuerierClient :: ARPQuerier(100.0.0.45, lb1-eth1);
-arpQuerierServer :: ARPQuerier(100.0.0.45, lb1-eth2);
-arpRespondClient :: ARPResponder(100.0.0.45 lb1-eth1);
-arpRespondServer :: ARPResponder(100.0.0.45 lb1-eth2);
+arpQuerierClient :: ARPQuerier(100.0.0.45, lb-eth2);
+arpQuerierServer :: ARPQuerier(100.0.0.45, lb-eth1);
+arpRespondClient :: ARPResponder(100.0.0.45 lb-eth2);
+arpRespondServer :: ARPResponder(100.0.0.45 lb-eth1);
 
-toClient :: Queue(1024) -> clientOutputCount -> FixedForwarder -> toClientDevice;
-toServer :: Queue(1024) -> serverOutputCount -> FixedForwarder -> toServerDevice;
 
-ipPacketClient :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierClient -> FixedForwarder -> toClient;
-ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> FixedForwarder -> toServer;
+ipPacketClient :: GetIPAddress(16) -> /*Print(GETIPADDRESS16, -1)->*/ CheckIPHeader -> /*Print(CHECKHEADER, -1) ->*/ [0]arpQuerierClient -> /*Print(ARPQUERIER, -1) ->*/ toClient;
+ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> toServer;
 
 ipRewrite :: IPRewriter (roundRobin);
 
@@ -70,44 +79,26 @@ ipRewrite[0] -> ipPacketServer;
 ipRewrite[1] -> ipPacketClient;
 
 //from client
-fromClient -> clientInputCount -> Print(INPUT_PACKET, -1) -> clientClassifier;
+fromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
-clientClassifier[0] -> arpReqCount -> arpRespondClient -> FixedForwarder -> Print(OUT_PACKET, -1) -> toClient;
-clientClassifier[1] -> arpQueCount -> [1]arpQuerierClient;
-clientClassifier[2] -> ipCount -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;
-clientClassifier[3] -> dropCount1 -> Discard;
+clientClassifier[0] -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;	//arp request
+clientClassifier[1] -> [1]arpQuerierClient;						//arp response
+clientClassifier[2] -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
+clientClassifier[3] -> Discard;								//others
 
-ipPacketClassifierClient[0] -> icmpCount -> ICMPPingResponder -> ipPacketClient;
+ipPacketClassifierClient[0] -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
 ipPacketClassifierClient[1] -> [0]ipRewrite;
-ipPacketClassifierClient[2] -> dropCount -> Discard;
+ipPacketClassifierClient[2] ->  Discard;
 
 //from server
-fromServer -> serverInputCount -> serverClassifier;
+fromServer -> serverClassifier;
 
-serverClassifier[0] -> arpReqCount1 -> arpRespondServer -> FixedForwarder -> toServer;
-serverClassifier[1] -> arpQueCount1 -> [1]arpQuerierServer;
-serverClassifier[2] -> ipCount1 -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
-serverClassifier[3] -> dropCount2 -> Discard;
+serverClassifier[0] -> arpRespondServer -> toServer;
+serverClassifier[1] -> [1]arpQuerierServer;
+serverClassifier[2] -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
+serverClassifier[3] -> Discard;
 
-ipPacketClassifierServer[0] -> icmpCount1 -> ICMPPingResponder -> ipPacketServer;
+ipPacketClassifierServer[0] -> ICMPPingResponder -> ipPacketServer;
 ipPacketClassifierServer[1] -> [0]ipRewrite;
-ipPacketClassifierServer[2] -> dropCount3 -> Discard;
-
-//Report
-DriverManager(wait, print > ../../results/lb.report "
-        ==============lb.report===============
-        Input Packet Rate (pps):  $(add $(clientInputCount.rate) $(serverInputCount.rate))
-        Output Packet Rate (pps):  $(add $(clientOutputCount.rate) $(serverOutputCount.rate))
-
-        Total # of input packet:  $(add $(clientInputCount.count) $(serverInputCount.count))
-        Total # of output packet:  $(add $(clientOutputCount.count) $(serverOutputCount.count))
-
-        Total # of ARP requests:  $(add $(arpReqCount.count) $(arpReqCount1.count))
-        Total # of ARP responses:  $(add $(arpQueCount.count) $(arpQueCount1.count))
-
-        Total # of service packets:  $(add $(ipCount.count) $(ipCount1.count))
-        Total # of ICMP packets:  $(add $(icmpCount.count) $(icmpCount.count))
-        Total # of dropped packets:  $(add $(dropCount.count) $(dropCount1.count) $(dropCount2.count) $(dropCount3.count))
-        ======================================",
-stop);
+ipPacketClassifierServer[2] -> Discard;
 

@@ -20,10 +20,9 @@ import datetime
 
 import click_wrapper
 
-import signal
-
 from l2_learning import LearningSwitch
 
+import signal
 
 log = core.getLogger()
 
@@ -40,7 +39,7 @@ class controller (object):
 
     def __init__(self):
         
-        signal.signal(signal.SIGINT, click_wrapper.handle_kill)
+        #signal.signal(signal.SIGINT, click_wrapper.handle_kill)
         
         webserver.webserver(self)
 
@@ -49,18 +48,20 @@ class controller (object):
         self.click_pids = {} 
     
 
-    #Not using, Taken from Click Tutorial Video
-    #def ids_launch_click(self, dpid):
-    #    cmd = "sudo click ids.click &"
-    #    print("Started Click")
-    #    p = subprocess.Popen(cmd, shell=True)
-    #    log.info("Launched click with PID:" +str(p.pid)+"\n")
-    def napt_lauch_click(self, dpid, name):
-        cmd = "sudo click napt.click &"
-        print("started napt")
+    #Taken from Click Tutorial Video
+    def ids_launch_click(self, dpid):
+        cmd = "sudo click /opt/pox/ext/ids.click &"
+        print("Started Click")
         p = subprocess.Popen(cmd, shell=True)
         log.info("Launched click with PID:" +str(p.pid)+"\n")
-
+    
+    
+    def launch_click(self, dpid):
+        cmd = "sudo click /opt/pox/ext/lb1.click &"
+        print("Started Click")
+        p = subprocess.Popen(cmd, shell=True)
+        log.info("Launched click with PID:" +str(p.pid)+"\n")
+    
         
     def _handle_ConnectionUp(self, event):
         """
@@ -83,7 +84,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7:
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 9 or dpid == 7:
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -105,22 +106,22 @@ class controller (object):
         
         if dpid == 8:
             log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
-            #Make the folder ids_tmp in opt/pox/ext
-            p = click_wrapper.start_click("/opt/pox/ext/ids.click", -1, "/opt/pox/ext/ids_tmp/ids.out", "/opt/pox/ext/ids_tmp/ids.err" )
-            #self.ids_launch_click(event.dpid)
+        #    p = click_wrapper.start_click("/opt/pox/ext/ids.click", -1, "/opt/pox/ext/ids_tmp/ids.out", "/opt/pox/ext/ids_tmp/ids.err" )
+            self.ids_launch_click(event.dpid)
             #log.info("Launched click with PID:" +str(p.pid)+"\n")
-            
-        if dpid == 9:
-            log.info("\nStarting a Click process for napt Switch %d" % event.dpid)
-            self.napt_lauch_click(event.dpid, "switch")
-
-       #if dpid == 7:
-        #   log.info("Starting click process for ib1 dpid = %d" % dpid)
-        #   p = click_wrapper.start_click("lb1.click", "", "/tmp/forwarder.stdout", "/tmp/forwarder.stderr")
-        #   log.info("Launched click with PID:" +str(p.pid)+"\n")
-#             ib1 = self.launch_click
+          
+        #if dpid == 7:
+        #    log.info("Starting click process for LB Switch = %d" % dpid)
+            #p = click_wrapper.start_click("/opt/pox/ext/lb1.click", "", "/opt/pox/ext/ids_tmp/lb1.out", "/opt/pox/ext/ids_tmp/lb1.err")
+        #    self.launch_click(dpid)
+#           ib1 = self.launch_click
 # lb1 does not exist
 #            self.devices[len(self.devices)] = lb1
+
+        #if dpid == 9:
+        #    log.info("\nStarting a Click process for NAPT Switch %d" % event.dpid)
+        #    p = click_wrapper.start_click("/opt/pox/ext/napt.click", -1, "/opt/pox/ext/ids_tmp/napt.out", "/opt/pox/ext/ids_tmp/napt.err" )
+
 
         return
 
@@ -177,5 +178,4 @@ class controller (object):
 
 
 def launch(configuration=""):
-
     core.registerNew(controller)

@@ -38,8 +38,8 @@ fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
 toServerDevice :: ToDevice(lb-eth1, METHOD LINUX);
 toClientDevice :: ToDevice(lb-eth2, METHOD LINUX);
 
-toServer :: /*FixedForwarder ->*/ Queue(1024) -> toServerDevice;
-toClient :: /*FixedForwarder ->*/ Queue(1024) -> toClientDevice;
+toServer :: Queue(1024) -> toServerDevice;
+toClient :: Queue(1024) -> toClientDevice;
 
 clientClassifier, serverClassifier :: Classifier(
     12/0806 20/0001, //ARP request
@@ -81,10 +81,10 @@ ipRewrite[1] -> ipPacketClient;
 //from client
 fromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
-clientClassifier[0] -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;	//arp request
-clientClassifier[1] -> [1]arpQuerierClient;						//arp response
-clientClassifier[2] -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
-clientClassifier[3] -> Discard;								//others
+clientClassifier[0] -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
+clientClassifier[1] -> [1]arpQuerierClient;									//arp response
+clientClassifier[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
+clientClassifier[3] -> Discard;											//others
 
 ipPacketClassifierClient[0] -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
 ipPacketClassifierClient[1] -> [0]ipRewrite;
@@ -95,7 +95,7 @@ fromServer -> serverClassifier;
 
 serverClassifier[0] -> arpRespondServer -> toServer;
 serverClassifier[1] -> [1]arpQuerierServer;
-serverClassifier[2] -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
+serverClassifier[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
 serverClassifier[3] -> Discard;
 
 ipPacketClassifierServer[0] -> ICMPPingResponder -> ipPacketServer;

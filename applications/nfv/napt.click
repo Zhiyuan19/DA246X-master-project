@@ -3,7 +3,7 @@ define($PORT1 napt-eth1, $PORT2 napt-eth2)
 //defination
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
 
-requestInArp, requestOutArp, responseInArp, responseOutArp, serviseRequest, switchDrop, serverDrop, icmpIn, icmpOut, icmpDropIn1, icmpDropIn2, icmpDropOut1, icmpDropOut1 :: Counter
+requestInArp, requestOutArp, responseInArp, responseOutArp, serviseRequest, switchDrop, serverDrop, icmpIn, icmpOut, icmpDropIn1, icmpDropIn2, icmpDropOut1, icmpDropOut2 :: Counter
 
 
 

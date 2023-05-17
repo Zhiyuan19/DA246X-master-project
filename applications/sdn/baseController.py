@@ -54,7 +54,12 @@ class controller (object):
         print("Started Click")
         p = subprocess.Popen(cmd, shell=True)
         log.info("Launched click with PID:" +str(p.pid)+"\n")
-    
+       
+    def napt_launch_click(self, dpid):
+        cmd = "sudo click /opt/pox/ext/napt.click &"
+        print("Started Click napt")
+        p = subprocess.Popen(cmd, shell=True)
+        log.info("Launched click with PID:" +str(p.pid)+"\n")
     
     def launch_click(self, dpid):
         cmd = "sudo click /opt/pox/ext/lb1.click &"
@@ -84,7 +89,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 9 or dpid == 7:
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7:
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -118,9 +123,10 @@ class controller (object):
 # lb1 does not exist
 #            self.devices[len(self.devices)] = lb1
 
-        #if dpid == 9:
-        #    log.info("\nStarting a Click process for NAPT Switch %d" % event.dpid)
-        #    p = click_wrapper.start_click("/opt/pox/ext/napt.click", -1, "/opt/pox/ext/ids_tmp/napt.out", "/opt/pox/ext/ids_tmp/napt.err" )
+        if dpid == 9:
+            log.info("\nStarting a Click process for NAPT Switch %d" % event.dpid)
+        #   p = click_wrapper.start_click("/opt/pox/ext/napt.click", -1, "/opt/pox/ext/ids_tmp/napt.out", "/opt/pox/ext/ids_tmp/napt.err" )
+            self.napt_launch_click(event.dpid)
 
 
         return

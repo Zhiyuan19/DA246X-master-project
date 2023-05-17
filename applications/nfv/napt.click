@@ -117,7 +117,7 @@ DriverManager(wait , print > ../../results/napt.report  "
 
       Total # of service packets: $(add $(serviseRequest.count) ) 
       Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpOut.count))   
-      Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count) $(icmpDropOut1.count))   
+      Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count) $(icmpDropOut2.count))   
      =================================================
 
 " , stop);

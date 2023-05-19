@@ -118,7 +118,7 @@ def run_tests(net):
 
     insp = net.get('insp')
 
-    lb1 = net.get('lb1')
+    #lb1 = net.get('lb1')
 
     ids = net.get('ids')
 

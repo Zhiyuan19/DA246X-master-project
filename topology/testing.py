@@ -64,6 +64,17 @@ def ping(client, server, expected, count=1, wait=1):
 
         print(client.name,"ping",server.name,"NOT WORKING AS EXPECTED")
 
+def ping_virtual(client, server, expected, count=1, wait=1):
+    
+    cmd = f"ping 100.0.0.45 -c {count} -W {wait} >/dev/null 2>&1; echo $?"
+    sleep(1)
+    ret = client.cmd(cmd)
+
+    if (int(ret) == 0 and expected) or (int(ret) !=0 and expected == False):
+        print(client.name,"ping",server.name,f"working as expected, ping {str(expected)}")
+    else:
+        print(client.name,"ping",server.name,"NOT WORKING AS EXPECTED")
+
 
 
 
@@ -200,24 +211,23 @@ def curl(client, server, method="POST", payload="Group2", port=80, expected=True
 
     # return True  # True means "everyhing went as expected"
 
-def http_test(client, method, method2):
+def http_test(client, method, method2, expected):
     cmd = f"curl --connect-timeout 3 --max-time 3 -X {method} -s 100.0.0.45{method2} > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
-    if ret == "0" and expected == True :
+    if ret == "0" and expected == True or (int(ret) !=0 and expected == False):
         print(client.name,"http request", "successfully")
         return True
     else:
         print(client.name,"http request", "failed")
         return False
+    
 
-
-
-def http_test_input(client, payload):
+def http_test_input(client, payload, expected):
     cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45\put > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
-    if ret == "0" and expected == True :
+    if ret == "0" and expected == True or (int(ret) !=0 and expected == False):
         print(client.name,"http request", "successfully")
         return True
     else:

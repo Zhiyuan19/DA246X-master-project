@@ -36,7 +36,7 @@ class FW1 (Firewall):
             #[1, 'TCP', 'any', 'any', '100.0.0.42/24', '80', 'allow'], # allow Pbz to DMC webserver
             #[1, 'TCP', 'any', 'any', '100.0.0.50/24', '80', 'allow'], # allow Pbz to Prz webserver
             #[1, 'TCP', 'any', 'any', '100.0.0.51/24', '80', 'allow'], # allow Pbz to Prz webserver
-            [1, 'any', 'any', 'any', '100.0.0.45/24', 'any', 'allow'], # allow Pbz to virtual IP webserver
+            [1, 'any', 'any', 'any', '100.0.0.45/32', 'any', 'allow'], # allow Pbz to virtual IP webserver
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
             [2, 'any', 'any', 'any', 'any', 'any', 'allow']
         ]
@@ -60,7 +60,7 @@ class FW2 (Firewall):
             [2, 'any', 'any', 'any', '100.0.0.40/29', 'any', 'block'], # block Prz to DMC webserver incorrect way
             #[2, 'any', 'any', 'any', '100.0.0.41/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
             #[2, 'any', 'any', 'any', '100.0.0.42/24', 'any', 'block'], # block Pbz to DMC webserver incorrect way
-            [2, 'any', 'any', 'any', '100.0.0.45/24', 'any', 'allow'], # allow Prz to virtual IP webserver
+            [2, 'any', 'any', 'any', '100.0.0.45/32', 'any', 'allow'], # allow Prz to virtual IP webserver
             [1, 'any', 'any', 'any', 'any', 'any', 'block'],
             [2, 'any', 'any', 'any', 'any', 'any', 'allow']
         ]

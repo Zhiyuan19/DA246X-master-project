@@ -216,19 +216,19 @@ def http_test(client, method, method2, expected):
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True or (int(ret) !=0 and expected == False):
-        print(client.name,"http request", "successfully")
+        print(client.name,"IDS System works", "correctly")
         return True
     else:
-        print(client.name,"http request", "failed")
+        print(client.name,"Error!!!")
         return False
-    
 
+   
 def http_test_input(client, payload, expected):
     cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45/put > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
-    if ret == "0" and expected == True or (int(ret) !=0 and expected == False):
-        print(client.name,"http request", "successfully")
+    if (int(ret) !=0 and expected == False):
+        print(client.name,"IDS System works", "correctly")
         return True
     else:
         print(client.name,"http request", "failed")

@@ -26,11 +26,6 @@ elementclass FixedForwarder{
         ->Unstrip(14)
         ->output
 }
-/*
-
-clientInputCount, serverInputCount, clientOutputCount, serverOutputCount :: AverageCounter;
-arpReqCount, arpReqCount1, arpQueCount, arpQueCount1, ipCount, ipCount1, icmpCount,
-icmpCount1, dropCount, dropCount1, dropCount2, dropCount3 :: Counter;*/
 
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
 requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serviceDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter

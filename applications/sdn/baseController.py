@@ -89,7 +89,7 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or dpid == 7:
+        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 or :
 
             l2_instance = LearningSwitch(event.connection, False)
 
@@ -115,10 +115,10 @@ class controller (object):
             self.ids_launch_click(event.dpid)
             #log.info("Launched click with PID:" +str(p.pid)+"\n")
           
-        #if dpid == 7:
-        #    log.info("Starting click process for LB Switch = %d" % dpid)
+        if dpid == 7:
+            log.info("Starting click process for LB Switch = %d" % dpid)
             #p = click_wrapper.start_click("/opt/pox/ext/lb1.click", "", "/opt/pox/ext/ids_tmp/lb1.out", "/opt/pox/ext/ids_tmp/lb1.err")
-        #    self.launch_click(dpid)
+            self.launch_click(dpid)
 #           ib1 = self.launch_click
 # lb1 does not exist
 #            self.devices[len(self.devices)] = lb1

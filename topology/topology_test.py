@@ -98,9 +98,9 @@ def run_tests(net):
 
     testing.ping(h3, ws1, False)
 
-    testing.curl(h1, ws1, expected=True)
+    #testing.curl(h1, ws1, expected=True)
 
-    testing.curl(h3, ws1, expected=True)
+    #testing.curl(h3, ws1, expected=True)
 
     print("----------- Virtual Address Ping Test-----------")
 

@@ -149,44 +149,43 @@ def run_tests(net):
 
 
 
-    testing.curl(h1, insp, expected=True)
+    testing.ping_virtual(h1, True)
 
-    testing.curl(h1, lb1, expected=True)
+    testing.ping_virtual(h2, True)
 
-    testing.curl(h1, ids, expected=True)
+    testing.ping_virtual(h3, True)
 
-    testing.curl(h1, napt, expected=True)
-
-
+    testing.ping_virtual(h4, True)
 
 
-    testing.http_test(h1, "GET", "/get")
 
-    testing.http_test(h1, "POST", "/post")
+    testing.http_test(h1, "GET", "/get", False)
 
-    #testing.http_test(h1, "HEAD", "/head")
+    testing.http_test(h1, "POST", "/post", True)
 
-    #testing.http_test(h1, "OPTIONS", "/options")
+    testing.http_test(h1, "HEAD", "/head", False)
 
-    #testing.http_test(h1, "TRACE", "/trace")
+    testing.http_test(h1, "OPTIONS", "/options", False)
 
-    testing.http_test(h1, "PUT", "/put")
+    testing.http_test(h1, "TRACE", "/trace", False)
 
-    #testing.http_test(h1, "DELETE", "/delete")
+    testing.http_test(h1, "PUT", "/put", True)
+
+    testing.http_test(h1, "DELETE", "/delete", False)
     
-    #testing.http_test(h1, "CONNECT", "/connect")
+    testing.http_test(h1, "CONNECT", "/connect", False)
 
 
 
-    testing.http_test_put(h1, "cat /etc/passwd ")
-
-    testing.http_test_put(h1, "cat /var/log/ ")
-
-    testing.http_test_put(h1, "INSERT")
-
-    testing.http_test_put(h1, "UPDATE")
-
-    testing.http_test_put(h1, "DELETE")
+    testing.http_test_put(h1, "cat /etc/passwd ", False)
+    
+    testing.http_test_put(h1, "cat /var/log/ ", False)
+    
+    testing.http_test_put(h1, "INSERT", False)
+    
+    testing.http_test_put(h1, "UPDATE", False)
+    
+    testing.http_test_put(h1, "DELETE", False)
 
 
 

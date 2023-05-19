@@ -148,6 +148,8 @@ def run_tests(net):
     testing.curl(h3, ws1, expected=True)
 
 
+    print("----------- Virtual Address Ping Test-----------")
+
 
     testing.ping_virtual(h1, True)
 
@@ -157,7 +159,7 @@ def run_tests(net):
 
     testing.ping_virtual(h4, True)
 
-
+    print("----------- HTTP method Test-----------")
 
     testing.http_test(h1, "GET", "/get", False)
 
@@ -175,7 +177,7 @@ def run_tests(net):
     
     testing.http_test(h1, "CONNECT", "/connect", False)
 
-
+    print("-----------Linux and SQL code injection Test-----------")
 
     testing.http_test_input(h1, "cat /etc/passwd ", False)
     

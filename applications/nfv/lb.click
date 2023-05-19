@@ -22,7 +22,7 @@ elementclass FixedForwarder{
 
 
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
-requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serviceDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
+requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serverDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
 
 fromClient :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
 fromServer :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);

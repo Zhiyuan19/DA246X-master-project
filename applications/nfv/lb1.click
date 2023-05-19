@@ -28,7 +28,7 @@ elementclass FixedForwarder{
 }
 
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
-requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serviceDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
+requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serverDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
 
 fromClient :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);
 fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
@@ -88,8 +88,8 @@ ipPacketClassifierClient[2] -> clientDrop1 -> Discard;
 //from server
 fromServer -> serverOutput -> serverClassifier;
 
-serverClassifier[0] -> requestClientArp -> arpRespondServer -> toServer;
-serverClassifier[1] -> responseClientArp -> [1]arpQuerierServer;
+serverClassifier[0] -> requestServerArp -> arpRespondServer -> toServer;
+serverClassifier[1] -> responseServerArp -> [1]arpQuerierServer;
 serverClassifier[2] -> serviceServer -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
 serverClassifier[3] -> serverDrop -> Discard;
 

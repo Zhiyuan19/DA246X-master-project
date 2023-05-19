@@ -139,8 +139,8 @@ DriverManager(wait , print > ../../results/napt.report  "
       Total # of   input packets: $(add $(switchInput.count) $(serverInput.count))
       Total # of  output packets: $(add $(switchOutput.count) $(serverOutput.count))
     
-      Total # of   ARP  requests: $(add $(requestInArp.rate) $(requestOutArp.rate))
-      Total # of   ARP responses: $(add $(responseInArp.rate) $(responseOutArp.rate))
+      Total # of   ARP  requests: $(add $(requestInArp.count) $(requestOutArp.count))
+      Total # of   ARP responses: $(add $(responseInArp.count) $(responseOutArp.count))
 
       Total # of service packets: $(add $(serviseRequest.count) ) 
       Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpOut.count))   

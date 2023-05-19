@@ -71,9 +71,9 @@ def ping_virtual(client, expected, count=1, wait=1):
     ret = client.cmd(cmd)
 
     if (int(ret) == 0 and expected) or (int(ret) !=0 and expected == False):
-        print(client.name,"ping",server.name,f"working as expected, ping {str(expected)}")
+        print(client.name,"ping",f"working as expected, ping {str(expected)}")
     else:
-        print(client.name,"ping",server.name,"NOT WORKING AS EXPECTED")
+        print(client.name,"ping","NOT WORKING AS EXPECTED")
 
 
 
@@ -224,7 +224,7 @@ def http_test(client, method, method2, expected):
     
 
 def http_test_input(client, payload, expected):
-    cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45\put > /dev/null 2>&1; echo $? "
+    cmd = f"curl --connect-timeout 3 --max-time 3 -X PUT -d '{payload}' -s 100.0.0.45/put > /dev/null 2>&1; echo $? "
     ret = client.cmd(cmd).strip()
 
     if ret == "0" and expected == True or (int(ret) !=0 and expected == False):

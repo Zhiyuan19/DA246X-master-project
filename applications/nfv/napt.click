@@ -1,4 +1,31 @@
 //
+//CODE for IPChecksumFixer taken FROM COURSE DISCUSSIONS  #https://canvas.kth.se/courses/39067/discussion_topics/302524
+
+elementclass IPChecksumFixer{ $print |
+        input
+        ->SetIPChecksum
+        -> class::IPClassifier(tcp, udp, -)
+        class[0] -> Print(TCP, ACTIVE $print) -> SetTCPChecksum -> output
+        class[1] -> Print(UDP, ACTIVE $print) -> SetUDPChecksum -> output
+        class[2] -> Print(OTH, ACTIVE $print) -> output
+}
+
+
+
+//Use before passing to ToDevice
+
+elementclass FixedForwarder{ 
+         input
+        -> Print(BEFORESTRIP, -1) 
+        ->Strip(14)
+        ->Print(BEFORECHECKSUM, -1)		
+        ->SetIPChecksum
+        //->Print(AFTERCHECKSUM, -1)
+        ->CheckIPHeader
+        ->IPChecksumFixer(0)
+        ->Unstrip(14)
+        ->output
+}
 define($PORT1 napt-eth1, $PORT2 napt-eth2)
 //defination
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
@@ -66,7 +93,7 @@ packetClassifierInt[0] -> requestInArp -> arpReplyIntern -> toInt;
 
 packetClassifierInt[1] -> responseInArp -> [1]arpRequestIntern;
 
-packetClassifierInt[2] -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
+packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
 
 packetClassifierInt[3] -> switchDrop -> Discard;
 
@@ -88,7 +115,7 @@ packetClassifierOut[0] -> requestOutArp -> arpReplyOutern -> toOut;
 
 packetClassifierOut[1] -> responseOutArp -> [1]arpRequestOutern;
 
-packetClassifierOut[2] -> Strip(14) -> CheckIPHeader -> ipClassifierOut;
+packetClassifierOut[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierOut;
 
 packetClassifierOut[3] -> serverDrop -> Discard;
 

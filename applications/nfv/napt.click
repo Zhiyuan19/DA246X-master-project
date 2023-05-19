@@ -11,9 +11,9 @@ fromInt :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
 
 fromOut :: FromDevice($PORT1, METHOD LINUX, SNIFFER false);
 
-toInt :: Queue -> switchOutput -> toPrzCt -> ToDevice($PORT2);
+toInt :: Queue -> switchOutput -> ToDevice($PORT2);
 
-toOut :: Queue -> serverOutput -> toDmzCt -> ToDevice($PORT1);
+toOut :: Queue -> serverOutput -> ToDevice($PORT1);
 
 
 

@@ -64,7 +64,7 @@ def ping(client, server, expected, count=1, wait=1):
 
         print(client.name,"ping",server.name,"NOT WORKING AS EXPECTED")
 
-def ping_virtual(client, server, expected, count=1, wait=1):
+def ping_virtual(client, expected, count=1, wait=1):
     
     cmd = f"ping 100.0.0.45 -c {count} -W {wait} >/dev/null 2>&1; echo $?"
     sleep(1)

@@ -26,20 +26,22 @@ elementclass FixedForwarder{
         ->Unstrip(14)
         ->output
 }
-
-
 /*
+
 clientInputCount, serverInputCount, clientOutputCount, serverOutputCount :: AverageCounter;
 arpReqCount, arpReqCount1, arpQueCount, arpQueCount1, ipCount, ipCount1, icmpCount,
 icmpCount1, dropCount, dropCount1, dropCount2, dropCount3 :: Counter;*/
+
+switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
+requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serviceDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
 
 fromClient :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);
 fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
 toServerDevice :: ToDevice(lb-eth1, METHOD LINUX);
 toClientDevice :: ToDevice(lb-eth2, METHOD LINUX);
 
-toServer :: Queue(1024) -> toServerDevice;
-toClient :: Queue(1024) -> toClientDevice;
+toServer :: Queue(1024) -> serverInput -> toServerDevice;
+toClient :: Queue(1024) -> switchInput -> toClientDevice;
 
 clientClassifier, serverClassifier :: Classifier(
     12/0806 20/0001, //ARP request
@@ -58,12 +60,10 @@ ipPacketClassifierServer :: IPClassifier(
     -); //others
 
 
-
 arpQuerierClient :: ARPQuerier(100.0.0.45, lb-eth2);
 arpQuerierServer :: ARPQuerier(100.0.0.45, lb-eth1);
 arpRespondClient :: ARPResponder(100.0.0.45 lb-eth2);
 arpRespondServer :: ARPResponder(100.0.0.45 lb-eth1);
-
 
 ipPacketClient :: GetIPAddress(16) -> /*Print(GETIPADDRESS16, -1)->*/ CheckIPHeader -> /*Print(CHECKHEADER, -1) ->*/ [0]arpQuerierClient -> /*Print(ARPQUERIER, -1) ->*/ toClient;
 ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> toServer;
@@ -81,24 +81,45 @@ ipRewrite[1] -> ipPacketClient;
 //from client
 fromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
-clientClassifier[0] -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
-clientClassifier[1] -> [1]arpQuerierClient;									//arp response
-clientClassifier[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
-clientClassifier[3] -> Discard;											//others
+clientClassifier[0] -> requestClientArp -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
+clientClassifier[1] -> responseClientArp -> [1]arpQuerierClient;									//arp response
+clientClassifier[2] -> serviceClient -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
+clientClassifier[3] -> clientDrop -> Discard;											//others
 
-ipPacketClassifierClient[0] -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
+ipPacketClassifierClient[0] -> icmpClient -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
 ipPacketClassifierClient[1] -> [0]ipRewrite;
-ipPacketClassifierClient[2] ->  Discard;
+ipPacketClassifierClient[2] -> clientDrop1 -> Discard;
 
 //from server
 fromServer -> serverClassifier;
 
-serverClassifier[0] -> arpRespondServer -> toServer;
-serverClassifier[1] -> [1]arpQuerierServer;
-serverClassifier[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
-serverClassifier[3] -> Discard;
+serverClassifier[0] -> requestClientArp -> arpRespondServer -> toServer;
+serverClassifier[1] -> responseClientArp -> [1]arpQuerierServer;
+serverClassifier[2] -> serviceServer -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
+serverClassifier[3] -> serverDrop -> Discard;
 
-ipPacketClassifierServer[0] -> ICMPPingResponder -> ipPacketServer;
+ipPacketClassifierServer[0] -> icmpServer -> ICMPPingResponder -> ipPacketServer;
 ipPacketClassifierServer[1] -> [0]ipRewrite;
-ipPacketClassifierServer[2] -> Discard;
+ipPacketClassifierServer[2] -> serverDrop1 -> Discard;
+
+DriverManager(wait , print > ../../results/lb1.report  "
+     =================== LB1 Report ===================
+        Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
+        Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))
+        
+      Total # of   input packets: $(add $(switchInput.count) $(serverInput.count))
+      Total # of  output packets: $(add $(switchOutput.count) $(serverOutput.count))
+
+      Total # of   ARP  requests: $(add $(requestCLientArp.rate) $(requestServerArp.rate))
+      Total # of   ARP responses: $(add $(responseClientArp.rate) $(responseServerArp.rate))
+
+      Total # of service packets: $(add $(serviceServer.rate) $(serviceClient.rate))
+      Total # of    ICMP report:  $(add $(icmpServer.rate) $(icmpClient.rate))
+      Total # of dropped packets: $(add $(serverDrop.rate) $(serverDrop1.rate) $(clientDrop.rate) $(clientDrop1.rate))  
+
+
+
+     =================================================
+
+   " , stop);
 

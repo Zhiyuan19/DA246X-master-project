@@ -101,12 +101,12 @@ DriverManager(wait , print > ../../results/lb1.report  "
       Total # of   input packets: $(add $(switchInput.count) $(serverInput.count))
       Total # of  output packets: $(add $(switchOutput.count) $(serverOutput.count))
       
-      Total # of   ARP  requests: $(add $(requestClientArp.rate) $(requestServerArp.rate))
-      Total # of   ARP responses: $(add $(responseClientArp.rate) $(responseServerArp.rate))
+      Total # of   ARP  requests: $(add $(requestClientArp.count) $(requestServerArp.count))
+      Total # of   ARP responses: $(add $(responseClientArp.count) $(responseServerArp.count))
       
-      Total # of service packets: $(add $(serviceServer.rate) $(serviceClient.rate))
-      Total # of    ICMP report:  $(add $(icmpServer.rate) $(icmpClient.rate))
-      Total # of dropped packets: $(add $(serverDrop.rate) $(serverDrop1.rate) $(clientDrop.rate) $(clientDrop1.rate))  
+      Total # of service packets: $(add $(serviceServer.count) $(serviceClient.count))
+      Total # of    ICMP report:  $(add $(icmpServer.count) $(icmpClient.count))
+      Total # of dropped packets: $(add $(serverDrop.count) $(serverDrop1.count) $(clientDrop.count) $(clientDrop1.count))  
 
      =================================================
    " , stop);

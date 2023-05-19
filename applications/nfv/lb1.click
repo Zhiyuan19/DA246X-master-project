@@ -105,7 +105,7 @@ DriverManager(wait , print > ../../results/lb1.report  "
       Total # of   input packets: $(add $(switchInput.count) $(serverInput.count))
       Total # of  output packets: $(add $(switchOutput.count) $(serverOutput.count))
 
-      Total # of   ARP  requests: $(add $(requestCLientArp.rate) $(requestServerArp.rate))
+      Total # of   ARP  requests: $(add $(requestClientArp.rate) $(requestServerArp.rate))
       Total # of   ARP responses: $(add $(responseClientArp.rate) $(responseServerArp.rate))
 
       Total # of service packets: $(add $(serviceServer.rate) $(serviceClient.rate))

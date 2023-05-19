@@ -177,15 +177,15 @@ def run_tests(net):
 
 
 
-    testing.http_test_put(h1, "cat /etc/passwd ", False)
+    testing.http_test_input(h1, "cat /etc/passwd ", False)
     
-    testing.http_test_put(h1, "cat /var/log/ ", False)
+    testing.http_test_input(h1, "cat /var/log/ ", False)
     
-    testing.http_test_put(h1, "INSERT", False)
+    testing.http_test_input(h1, "INSERT", False)
     
-    testing.http_test_put(h1, "UPDATE", False)
+    testing.http_test_input(h1, "UPDATE", False)
     
-    testing.http_test_put(h1, "DELETE", False)
+    testing.http_test_input(h1, "DELETE", False)
 
 
 

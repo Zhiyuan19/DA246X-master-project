@@ -58,7 +58,7 @@ ipClassifierInt, ipClassifierOut :: IPClassifier(
 )
 
 
-fromInt -> switchInput -> fromPrzCt -> packetClassifierInt;
+fromInt -> switchInput -> packetClassifierInt;
 
 
 

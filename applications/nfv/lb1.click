@@ -74,7 +74,7 @@ ipRewrite[0] -> ipPacketServer;
 ipRewrite[1] -> ipPacketClient;
 
 //from client
-fromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
+fromClient -> switchOutput -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
 clientClassifier[0] -> requestClientArp -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
 clientClassifier[1] -> responseClientArp -> [1]arpQuerierClient;									//arp response
@@ -86,7 +86,7 @@ ipPacketClassifierClient[1] -> [0]ipRewrite;
 ipPacketClassifierClient[2] -> clientDrop1 -> Discard;
 
 //from server
-fromServer -> serverClassifier;
+fromServer -> serverOutput -> serverClassifier;
 
 serverClassifier[0] -> requestClientArp -> arpRespondServer -> toServer;
 serverClassifier[1] -> responseClientArp -> [1]arpQuerierServer;

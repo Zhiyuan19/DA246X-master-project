@@ -29,7 +29,9 @@ elementclass FixedForwarder{
 
 avgCntToClient, avgCntFromClient, avgCntToServer, avgCntFromServer :: AverageCounter
 
-requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serverDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
+cntArpReqSrv, ¨cntArpReqClient, cntArpRspSrv, cntArpRspClient :: Counter
+cntDropFromClientEth, cntDropFromClientIP, cntDropFromSvrEth, cntDropFromSvrIP,  :: Counter
+cntLbServedFromClient, cntLbServedFromSrv, cntIcmpFromClient, cntIcmpFromServer :: Counter
 
 fromClient :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);
 fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
@@ -77,26 +79,26 @@ ipRewrite[1] -> ipPacketClient;
 //from client
 fromClient -> avgCntFromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
-clientClassifier[0] -> requestClientArp -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
-clientClassifier[1] -> responseClientArp -> [1]arpQuerierClient;									//arp response
-clientClassifier[2] -> serviceClient -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
-clientClassifier[3] -> clientDrop -> Discard;											//others
+clientClassifier[0] -> ¨cntArpReqClient -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
+clientClassifier[1] -> cntArpRspClient -> [1]arpQuerierClient;									//arp response
+clientClassifier[2] -> cntLbServedFromClient -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierClient;		//ip	
+clientClassifier[3] -> cntDropFromClientEth -> Discard;											//others
 
-ipPacketClassifierClient[0] -> icmpClient -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
+ipPacketClassifierClient[0] -> cntIcmpFromClient -> Print(CLASSIFIED_CLIENT_PING, -1) -> ICMPPingResponder -> /*Print(PINGRESPONSE, -1)->*/ ipPacketClient;
 ipPacketClassifierClient[1] -> [0]ipRewrite;
-ipPacketClassifierClient[2] -> clientDrop1 -> Discard;
+ipPacketClassifierClient[2] -> cntDropFromClientIP -> Discard;
 
 //from server
 fromServer -> avgCntFromServer -> serverClassifier;
 
-serverClassifier[0] -> requestServerArp -> arpRespondServer -> toServer;
-serverClassifier[1] -> responseServerArp -> [1]arpQuerierServer;
-serverClassifier[2] -> serviceServer -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
-serverClassifier[3] -> serverDrop -> Discard;
+serverClassifier[0] -> cntArpReqSrv -> arpRespondServer -> toServer;
+serverClassifier[1] -> cntArpRspSrv -> [1]arpQuerierServer;
+serverClassifier[2] -> cntLbServedFromSrv -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipPacketClassifierServer;
+serverClassifier[3] -> cntDropFromSvrEth -> Discard;
 
-ipPacketClassifierServer[0] -> icmpServer -> ICMPPingResponder -> ipPacketServer;
+ipPacketClassifierServer[0] -> cntIcmpFromServer -> ICMPPingResponder -> ipPacketServer;
 ipPacketClassifierServer[1] -> [0]ipRewrite;
-ipPacketClassifierServer[2] -> serverDrop1 -> Discard;
+ipPacketClassifierServer[2] -> cntDropFromSvrIP -> Discard;
 
 DriverManager(wait , print > ../../results/lb1.report  "
      =================== LB1 Report ===================
@@ -106,14 +108,12 @@ DriverManager(wait , print > ../../results/lb1.report  "
       Total # of   input packets: $(add $(avgCntToClient.count) $(avgCntToServer.count))
       Total # of  output packets: $(add $(avgCntFromClient.count) $(avgCntFromServer.count))
 
-      Total # of   ARP  requests: $(add $(requestClientArp.count) $(requestServerArp.count))
-      Total # of   ARP responses: $(add $(responseClientArp.count) $(responseServerArp.count))
+      Total # of   ARP  requests: $(add $(¨cntArpReqClient.count) $(cntArpReqSrv.count))
+      Total # of   ARP responses: $(add $(cntArpRspClient.count) $(cntArpRspSrv.count))
 
-      Total # of service packets: $(add $(serviceServer.count) $(serviceClient.count))
-      Total # of    ICMP report:  $(add $(icmpServer.count) $(icmpClient.count))
-      Total # of dropped packets: $(add $(serverDrop.count) $(serverDrop1.count) $(clientDrop.count) $(clientDrop1.count))  
-
-
+      Total # of service packets: $(add $(cntLbServedFromSrv.count) $(cntLbServedFromClient.count))
+      Total # of    ICMP report:  $(add $(cntIcmpFromServer.count) $(cntIcmpFromClient.count))
+      Total # of dropped packets: $(add $(cntDropFromSvrEth.count) $(cntDropFromSvrIP.count) $(cntDropFromClientEth.count) $(cntDropFromClientIP.count))  
 
      =================================================
 

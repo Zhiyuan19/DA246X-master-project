@@ -100,7 +100,7 @@ ipPacketClassifierServer[0] -> cntIcmpFromServer -> ICMPPingResponder -> ipPacke
 ipPacketClassifierServer[1] -> [0]ipRewrite;
 ipPacketClassifierServer[2] -> cntDropFromSvrIP -> Discard;
 
-DriverManager(wait , print > ../../results/lb1.report  "
+DriverManager(pause , print > ../../results/lb1.report  "
      =================== LB1 Report ===================
         Input Packet rate (pps): $(add $(avgCntToClient.rate) $(avgCntToServer.rate))
         Output Packet rate (pps): $(add $(avgCntFromClient.rate) $(avgCntFromServer.rate))
@@ -117,5 +117,5 @@ DriverManager(wait , print > ../../results/lb1.report  "
 
      =================================================
 
-   " , stop);
+   " );
 

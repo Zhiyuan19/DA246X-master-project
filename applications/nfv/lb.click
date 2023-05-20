@@ -93,7 +93,7 @@ ipPacketClassifierServer[0] -> icmpServer -> ICMPPingResponder -> ipPacketServer
 ipPacketClassifierServer[1] -> [0]ipRewrite;
 ipPacketClassifierServer[2] -> serverDrop1 -> Discard;
 
-DriverManager(wait , print > ../../results/lb1.report  "
+DriverManager(pause , print > ../../results/lb1.report  "
      =================== LB1 Report ===================
         Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
         Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))
@@ -109,4 +109,4 @@ DriverManager(wait , print > ../../results/lb1.report  "
       Total # of dropped packets: $(add $(serverDrop.count) $(serverDrop1.count) $(clientDrop.count) $(clientDrop1.count))  
 
      =================================================
-   " , stop);
+   " );

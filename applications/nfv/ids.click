@@ -104,7 +104,7 @@ serverPacketType[0] -> serverARP -> toSWITCH;
 serverPacketType[1] -> serverIP -> FixedForwarder -> toSWITCH;
 serverPacketType[2] -> serverDrop -> Discard;
 
- DriverManager(wait , print > ids.report  " 
+ DriverManager(pause , print > ids.report  " 
 
       =================== IDS Report ===================
       Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
@@ -125,7 +125,7 @@ serverPacketType[2] -> serverDrop -> Discard;
       Total # of dropped packets:  $(add $(switchDrop.count) $(serverDrop.count))
     =================================================
 
- " , stop);
+ " );
 
 
 

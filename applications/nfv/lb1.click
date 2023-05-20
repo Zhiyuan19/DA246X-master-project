@@ -27,7 +27,8 @@ elementclass FixedForwarder{
         ->output
 }
 
-switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
+avgCntToClient, avgCntFromClient, avgCntToServer, avgCntFromServer :: AverageCounter
+
 requestServerArp, requestClientArp, responseServerArp, responseClientArp, clientDrop, serverDrop, serverDrop1, clientDrop1, serviceClient, serviceServer, icmpClient, icmpServer :: Counter
 
 fromClient :: FromDevice(lb-eth2, METHOD LINUX, SNIFFER false);
@@ -35,8 +36,8 @@ fromServer :: FromDevice(lb-eth1, METHOD LINUX, SNIFFER false);
 toServerDevice :: ToDevice(lb-eth1, METHOD LINUX);
 toClientDevice :: ToDevice(lb-eth2, METHOD LINUX);
 
-toServer :: Queue(1024) -> serverInput -> toServerDevice;
-toClient :: Queue(1024) -> switchInput -> toClientDevice;
+toServer :: Queue(1024) -> avgCntToServer -> toServerDevice;
+toClient :: Queue(1024) -> avgCntToClient -> toClientDevice;
 
 clientClassifier, serverClassifier :: Classifier(
     12/0806 20/0001, //ARP request
@@ -60,21 +61,21 @@ arpQuerierServer :: ARPQuerier(100.0.0.45, lb-eth1);
 arpRespondClient :: ARPResponder(100.0.0.45 lb-eth2);
 arpRespondServer :: ARPResponder(100.0.0.45 lb-eth1);
 
-ipPacketClient :: GetIPAddress(16) -> /*Print(GETIPADDRESS16, -1)->*/ CheckIPHeader -> /*Print(CHECKHEADER, -1) ->*/ [0]arpQuerierClient -> /*Print(ARPQUERIER, -1) ->*/ toClient;
-ipPacketServer :: GetIPAddress(16) -> CheckIPHeader -> [0]arpQuerierServer -> toServer;
-
-ipRewrite :: IPRewriter (roundRobin);
+ipPacketClient :: GetIPAddress(16) -> Print(TOCLINET_GETIPADDRESS16, -1, ACTIVE 1) -> CheckIPHeader -> Print(TOCLINENT_CHECKHEADER, -1, ACTIVE 1) -> [0]arpQuerierClient -> Print(ARPQUERIER, -1, ACTIVE 1) -> toClient;
+ipPacketServer :: GetIPAddress(16) -> Print(TOSERVER_GETIPADDRESS16, -1, ACTIVE 1) -> CheckIPHeader -> [0]arpQuerierServer -> Print(TOSERVER_AFTERARP, -1, ACTIVE 1) -> toServer;
 
 roundRobin :: RoundRobinIPMapper(
     100.0.0.45 - 100.0.0.40 - 0 1,
     100.0.0.45 - 100.0.0.41 - 0 1,
     100.0.0.45 - 100.0.0.42 - 0 1);
 
+ipRewrite :: IPRewriter (roundRobin);
+
 ipRewrite[0] -> ipPacketServer;
 ipRewrite[1] -> ipPacketClient;
 
 //from client
-fromClient -> switchOutput -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
+fromClient -> avgCntFromClient -> /*Print(FROMCLIENT, -1) ->*/ clientClassifier;
 
 clientClassifier[0] -> requestClientArp -> /*Print(CLIENT_PING, -1) ->*/ arpRespondClient -> toClient;				//arp request
 clientClassifier[1] -> responseClientArp -> [1]arpQuerierClient;									//arp response
@@ -86,7 +87,7 @@ ipPacketClassifierClient[1] -> [0]ipRewrite;
 ipPacketClassifierClient[2] -> clientDrop1 -> Discard;
 
 //from server
-fromServer -> serverOutput -> serverClassifier;
+fromServer -> avgCntFromServer -> serverClassifier;
 
 serverClassifier[0] -> requestServerArp -> arpRespondServer -> toServer;
 serverClassifier[1] -> responseServerArp -> [1]arpQuerierServer;
@@ -99,11 +100,11 @@ ipPacketClassifierServer[2] -> serverDrop1 -> Discard;
 
 DriverManager(wait , print > ../../results/lb1.report  "
      =================== LB1 Report ===================
-        Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
-        Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))
+        Input Packet rate (pps): $(add $(avgCntToClient.rate) $(avgCntToServer.rate))
+        Output Packet rate (pps): $(add $(avgCntFromClient.rate) $(avgCntFromServer.rate))
         
-      Total # of   input packets: $(add $(switchInput.count) $(serverInput.count))
-      Total # of  output packets: $(add $(switchOutput.count) $(serverOutput.count))
+      Total # of   input packets: $(add $(avgCntToClient.count) $(avgCntToServer.count))
+      Total # of  output packets: $(add $(avgCntFromClient.count) $(avgCntFromServer.count))
 
       Total # of   ARP  requests: $(add $(requestClientArp.count) $(requestServerArp.count))
       Total # of   ARP responses: $(add $(responseClientArp.count) $(responseServerArp.count))

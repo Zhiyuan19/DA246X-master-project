@@ -131,7 +131,7 @@ ipClassifierOut[1] -> icmpDropOut2 -> Discard;
 
 
 
-DriverManager(wait , print > ../../results/napt.report  "
+DriverManager(pause , print > ../../results/napt.report  "
      =================== NAPT Report ===================
         Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
         Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))
@@ -147,5 +147,5 @@ DriverManager(wait , print > ../../results/napt.report  "
       Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count) $(icmpDropOut2.count))   
      =================================================
 
-" , stop);
+" );
 

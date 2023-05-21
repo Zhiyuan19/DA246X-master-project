@@ -57,7 +57,7 @@ packetClassifierPrz, packetClassifierExt :: Classifier(
     12/0806 20/0001, //ARP request
     12/0806 20/0002, //ARP respond
     12/0800, //IP
-    - //rest
+    - //others
 )
 
 

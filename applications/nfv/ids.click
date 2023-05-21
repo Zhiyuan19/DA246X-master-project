@@ -104,7 +104,7 @@ serverPacketType[0] -> serverARP -> toSWITCH;
 serverPacketType[1] -> serverIP -> FixedForwarder -> toSWITCH;
 serverPacketType[2] -> serverDrop -> Discard;
 
- DriverManager(pause , print > ids.report  " 
+ DriverManager(pause , print > /opt/pox/ext/results/ids.report  " 
 
       =================== IDS Report ===================
       Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))

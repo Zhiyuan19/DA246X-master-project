@@ -106,7 +106,7 @@ DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
       Total # of   ARP  requests: $(add $(requestInArp.count) $(requestOutArp.count))
       Total # of   ARP responses: $(add $(responseInArp.count) $(responseOutArp.count))
 
-      Total # of service packets: $(add $(serviceRequest.count) $(serviceRequest2.count) ) 
+      Total # of service packets: $(add $(serviceRequest1.count) $(serviceRequest2.count) ) 
       Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpOut.count))   
       Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count) $(icmpDropOut2.count))   
      =================================================

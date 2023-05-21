@@ -79,7 +79,7 @@ packetClassifierPrz[3] -> switchDrop -> Discard;
 
 ipClassifierPrz[0] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[1] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierPrz[2] -> icmpIn1 -> Discard; 
+ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
 ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
 
 
@@ -92,7 +92,7 @@ packetClassifierExt[3] -> serverDrop -> Discard;
 
 ipClassifierExt[0] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestPrz -> toPrz;
-ipClassifierExt[3] -> icmpOut1  -> Discard;
+ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 ipClassifierExt[1] -> icmpDropOut2 -> Discard;
 
 DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
@@ -107,8 +107,8 @@ DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
       Total # of   ARP responses: $(add $(responseInArp.count) $(responseOutArp.count))
 
       Total # of service packets: $(add $(serviseRequest1.count) $(serviseRequest2.count) ) 
-      Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpIn1.count) $(icmpOut.count) $(icmpOut1.count))   
-      Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn2.count) $(icmpDropOut2.count))   
+      Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpOut.count))   
+      Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count)$(icmpDropOut2.count))   
      =================================================
 
 

@@ -62,7 +62,7 @@ fromPrz -> switchInput -> packetClassifierPrz;
 
 packetClassifierInt[0] -> requestInArp -> arpReplyPrz -> toPrz;
 packetClassifierInt[1] -> responseInArp -> [1]arpRequestPrz;
-packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierPrz;
+packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
 packetClassifierInt[3] -> switchDrop -> Discard;
 
 ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;

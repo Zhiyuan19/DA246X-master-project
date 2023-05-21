@@ -30,7 +30,7 @@ elementclass FixedForwarder{
 define($PORT1 napt-eth1, $PORT2 napt-eth2)
 //defination
 switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
-requestInArp, requestOutArp, responseInArp, responseOutArp, serviseRequest, switchDrop, serverDrop, icmpIn, icmpOut, icmpDropIn1, icmpDropIn2, icmpDropOut1, icmpDropOut2 :: Counter
+requestInArp, requestOutArp, responseInArp, responseOutArp, serviceRequest1, serviceRequest2, switchDrop, serverDrop, icmpIn, icmpOut, icmpDropIn1, icmpDropIn2, icmpDropOut1, icmpDropOut2 :: Counter
 
 
 fromPrz :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
@@ -77,7 +77,7 @@ packetClassifierPrz[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClas
 packetClassifierPrz[3] -> switchDrop -> Discard;
 
 
-ipClassifierPrz[0] -> serviseRequest -> IpNAT[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[0] -> serviseRequest1 -> IpNAT[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[1] -> icmpIn -> IcmpNAT[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
 ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
@@ -90,7 +90,7 @@ packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExtern;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
-ipClassifierExt[0] -> IpNAT[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[0] -> serviseRequest2 ->IpNAT[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[2] -> icmpOut -> IcmpNAT[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 ipClassifierExt[1] -> icmpDropOut2 -> Discard;
@@ -106,7 +106,7 @@ DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
       Total # of   ARP  requests: $(add $(requestInArp.count) $(requestOutArp.count))
       Total # of   ARP responses: $(add $(responseInArp.count) $(responseOutArp.count))
 
-      Total # of service packets: $(add $(serviseRequest.count) ) 
+      Total # of service packets: $(add $(serviceRequest.count) $(serviceRequest2.count) ) 
       Total # of    ICMP report:  $(add $(icmpIn.count) $(icmpOut.count))   
       Total # of dropped packets: $(add $(switchDrop.count) $(serverDrop.count) $(icmpDropIn1.count) $(icmpDropIn2.count) $(icmpDropOut1.count) $(icmpDropOut2.count))   
      =================================================

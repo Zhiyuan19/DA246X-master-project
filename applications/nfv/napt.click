@@ -95,7 +95,7 @@ ipClassifierExt[2] -> icmpOut -> IcmpNAT[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 ipClassifierExt[1] -> icmpDropOut2 -> Discard;
 
-DriverManager(pause , print > /home/ik2220/click/test3/SDN-NFV/results/napt.report  "
+DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
      =================== NAPT Report ===================
         Input Packet rate (pps): $(add $(switchInput.rate) $(serverInput.rate))
         Output Packet rate (pps): $(add $(switchOutput.rate) $(serverOutput.rate))

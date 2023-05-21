@@ -47,8 +47,8 @@ arpRequestExtern :: ARPQuerier(100.0.0.1, 3e-b6-37-4f-63-8e);
 
 
 
-IpNAT :: IPRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
-IcmpNAT :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
+IpRe :: IPRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
+IcmpRe :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 
 
 
@@ -77,8 +77,8 @@ packetClassifierPrz[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClas
 packetClassifierPrz[3] -> switchDrop -> Discard;
 
 
-ipClassifierPrz[0] -> serviseRequest -> IpNAT[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierPrz[1] -> icmpIn -> IcmpNAT[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[0] -> serviseRequest -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[1] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
 ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
 
@@ -90,8 +90,8 @@ packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExtern;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
-ipClassifierExt[0] -> IpNAT[1] -> [0]arpRequestPrz -> toPrz;
-ipClassifierExt[2] -> icmpOut -> IcmpNAT[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[0] -> IpRe[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 ipClassifierExt[1] -> icmpDropOut2 -> Discard;
 

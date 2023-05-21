@@ -9,7 +9,12 @@ topo:
 
 app:
 	@echo "starting the baseController!"
+
+	sudo cp ./applications/sdn/* /opt/pox/ext
+	sudo cp ./applications/nfv/* /opt/pox/ext
+	mkdir /opt/pox/ext/results
 	cd $(poxdir) && python ./pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
+	
 
 test_prog:
 	@echo "starting mininet and test program!"

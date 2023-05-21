@@ -40,10 +40,10 @@ toExtern :: Queue -> serverOutput -> ToDevice($PORT1);
 
 
 
-arpReplyPrz :: ARPResponder(10.0.0.1 10.0.0.0/24 9e-a3-ec-98-af-25);
-arpReplyExtern :: ARPResponder(100.0.0.1 100.0.0.0/24 3e-b6-37-4f-63-8e);
-arpRequestPrz :: ARPQuerier(10.0.0.1, 9e-a3-ec-98-af-25);	
-arpRequestExtern :: ARPQuerier(100.0.0.1, 3e-b6-37-4f-63-8e);
+arpReplyInt :: ARPResponder(10.0.0.1 10.0.0.0/24 9e-a3-ec-98-af-25);
+arpReplyExt :: ARPResponder(100.0.0.1 100.0.0.0/24 3e-b6-37-4f-63-8e);
+arpRequestInt :: ARPQuerier(10.0.0.1, 9e-a3-ec-98-af-25);	
+arpRequestExt :: ARPQuerier(100.0.0.1, 3e-b6-37-4f-63-8e);
 
 
 
@@ -60,27 +60,27 @@ ipClassifierInt, ipClassifierExt :: IPClassifier( icmp type echo, tcp, icmp type
 
 fromPrz -> switchInput -> packetClassifierPrz;
 
-packetClassifierInt[0] -> requestInArp -> arpReplyPrz -> toPrz;
-packetClassifierInt[1] -> responseInArp -> [1]arpRequestPrz;
+packetClassifierInt[0] -> requestInArp -> arpReplyInt -> toPrz;
+packetClassifierInt[1] -> responseInArp -> [1]arpRequestInt;
 packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
 packetClassifierInt[3] -> switchDrop -> Discard;
 
-ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierInt[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExt -> toExtern;
+ipClassifierInt[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExt -> toExtern;
 ipClassifierInt[2] -> icmpDropIn1 -> Discard; 
 ipClassifierInt[3] -> icmpDropIn2 -> Discard;
 
 
 fromExtern -> serverInput -> packetClassifierExt;
 
-packetClassifierExt[0] -> requestOutArp -> arpReplyExtern -> toExtern;
-packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExtern;
+packetClassifierExt[0] -> requestOutArp -> arpReplyExt -> toExtern;
+packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExt;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
 ipClassifierExt[0] -> icmpDropOut2 -> Discard;
-ipClassifierExt[1] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestPrz -> toPrz;
-ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[1] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestInt -> toPrz;
+ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestInt -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 
 

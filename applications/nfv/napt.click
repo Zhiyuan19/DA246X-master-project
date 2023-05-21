@@ -77,7 +77,7 @@ packetClassifierPrz[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClas
 packetClassifierPrz[3] -> switchDrop -> Discard;
 
 
-ipClassifierPrz[0] -> serviseRequest1 -> IpNAT[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[0] -> serviceRequest1 -> IpNAT[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[1] -> icmpIn -> IcmpNAT[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
 ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
@@ -90,7 +90,7 @@ packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExtern;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
-ipClassifierExt[0] -> serviseRequest2 ->IpNAT[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[0] -> serviceRequest2 ->IpNAT[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[2] -> icmpOut -> IcmpNAT[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 ipClassifierExt[1] -> icmpDropOut2 -> Discard;

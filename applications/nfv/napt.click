@@ -52,13 +52,7 @@ IcmpRe :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 
 
 
-packetClassifierPrz, packetClassifierExt :: Classifier(
-
-    12/0806 20/0001, //ARP request
-    12/0806 20/0002, //ARP respond
-    12/0800, //IP
-    - //others
-)
+packetClassifierPrz, packetClassifierExt :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800,  - )
 
 
 ipClassifierPrz, ipClassifierExt :: IPClassifier(

@@ -52,23 +52,23 @@ IcmpRe :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 
 
 
-packetClassifierPrz, packetClassifierExt :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800,  - )
+packetClassifierInt, packetClassifierExt :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800,  - )
 
 
-ipClassifierPrz, ipClassifierExt :: IPClassifier( icmp type echo, tcp, icmp type echo-reply, -)
+ipClassifierInt, ipClassifierExt :: IPClassifier( icmp type echo, tcp, icmp type echo-reply, -)
 
 
 fromPrz -> switchInput -> packetClassifierPrz;
 
-packetClassifierPrz[0] -> requestInArp -> arpReplyPrz -> toPrz;
-packetClassifierPrz[1] -> responseInArp -> [1]arpRequestPrz;
-packetClassifierPrz[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierPrz;
-packetClassifierPrz[3] -> switchDrop -> Discard;
+packetClassifierInt[0] -> requestInArp -> arpReplyPrz -> toPrz;
+packetClassifierInt[1] -> responseInArp -> [1]arpRequestPrz;
+packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierPrz;
+packetClassifierInt[3] -> switchDrop -> Discard;
 
-ipClassifierPrz[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierPrz[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
-ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
+ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierInt[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierInt[2] -> icmpDropIn1 -> Discard; 
+ipClassifierInt[3] -> icmpDropIn2 -> Discard;
 
 
 fromExtern -> serverInput -> packetClassifierExt;

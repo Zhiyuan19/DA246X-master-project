@@ -438,7 +438,7 @@ def http_test(client, method, method2, expected):
 
     if ret == "0" and expected == True or (int(ret) !=0 and expected == False):
 
-        print(client.name,"IDS System works", "correctly")
+        print(client.name, "operates", method, "IDS System works", "correctly")
 
         return True
 

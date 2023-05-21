@@ -444,7 +444,7 @@ def http_test(client, method, method2, expected):
 
     else:
 
-        print(client.name,"Error!!!")
+        print(client.name, "operates", method, "Error!!!")
 
         return False
 

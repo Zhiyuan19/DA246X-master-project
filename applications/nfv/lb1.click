@@ -191,7 +191,7 @@ elementclass FixedForwarder {
 		Total number of input packets: $(add $(avgCntToExt.count) $(avgCntToInt.count))
 		Total number of output packets: $(add $(avgCntFromExt.count) $(avgCntFromInt.count))
 
-		Total number of ARP requests: $(add $(¨cntArpReqExt.count) $(cntArpReqSrv.count))
+		Total number of ARP requests: $(add $(cntArpReqExt.count) $(cntArpReqSrv.count))
 		Total number of ARP responses: $(add $(cntArpRspExt.count) $(cntArpRspSrv.count))
 
 		Total number of service packets: $(add $(cntLbServedFromSrv.count) $(cntLbServedFromExt.count))

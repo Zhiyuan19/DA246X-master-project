@@ -55,12 +55,7 @@ IcmpRe :: ICMPPingRewriter(pattern 100.0.0.1 20000-65535 - - 0 1);
 packetClassifierPrz, packetClassifierExt :: Classifier(12/0806 20/0001, 12/0806 20/0002, 12/0800,  - )
 
 
-ipClassifierPrz, ipClassifierExt :: IPClassifier(
-    tcp,
-    icmp type echo,
-    icmp type echo-reply,
-    -
-)
+ipClassifierPrz, ipClassifierExt :: IPClassifier( icmp type echo, tcp, icmp type echo-reply, -)
 
 
 fromPrz -> switchInput -> packetClassifierPrz;
@@ -70,9 +65,8 @@ packetClassifierPrz[1] -> responseInArp -> [1]arpRequestPrz;
 packetClassifierPrz[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierPrz;
 packetClassifierPrz[3] -> switchDrop -> Discard;
 
-
-ipClassifierPrz[0] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
-ipClassifierPrz[1] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExtern -> toExtern;
+ipClassifierPrz[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExtern -> toExtern;
 ipClassifierPrz[2] -> icmpDropIn1 -> Discard; 
 ipClassifierPrz[3] -> icmpDropIn2 -> Discard;
 
@@ -84,10 +78,11 @@ packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExtern;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
-ipClassifierExt[0] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestPrz -> toPrz;
+ipClassifierExt[0] -> icmpDropOut2 -> Discard;
+ipClassifierExt[1] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestPrz -> toPrz;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
-ipClassifierExt[1] -> icmpDropOut2 -> Discard;
+
 
 DriverManager(pause , print > /opt/pox/ext/results/napt.report  "
      =================== NAPT Report ===================

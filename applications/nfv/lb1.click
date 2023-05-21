@@ -182,7 +182,7 @@ elementclass FixedForwarder {
 
   DriverManager(
 		pause,
-		print > ../../results/lb1.report "
+		print > /opt/pox/ext/results/lb1.report "
 		=================== LB1 Report ===================
 		Input Packet rate (pps): $(add $(avgCntToExt.rate) $(avgCntToInt.rate))
 		Output Packet rate (pps): $(add $(avgCntFromExt.rate) $(avgCntFromInt.rate))

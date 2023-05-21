@@ -33,10 +33,10 @@ switchInput, switchOutput, serverInput, serverOutput :: AverageCounter
 requestInArp, requestOutArp, responseInArp, responseOutArp, serviseRequest1, serviseRequest2, switchDrop, serverDrop, icmpIn, icmpOut, icmpDropIn1, icmpDropIn2, icmpDropOut1, icmpDropOut2 :: Counter
 
 
-fromPrz :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
-fromExtern :: FromDevice($PORT1, METHOD LINUX, SNIFFER false);
-toPrz :: Queue -> switchOutput -> ToDevice($PORT2);
-toExtern :: Queue -> serverOutput -> ToDevice($PORT1);
+fromInt :: FromDevice($PORT2, METHOD LINUX, SNIFFER false);
+fromExt :: FromDevice($PORT1, METHOD LINUX, SNIFFER false);
+toInt :: Queue -> switchOutput -> ToDevice($PORT2);
+toExt :: Queue -> serverOutput -> ToDevice($PORT1);
 
 
 
@@ -58,29 +58,29 @@ packetClassifierInt, packetClassifierExt :: Classifier(12/0806 20/0001, 12/0806 
 ipClassifierInt, ipClassifierExt :: IPClassifier( icmp type echo, tcp, icmp type echo-reply, -)
 
 
-fromPrz -> switchInput -> packetClassifierPrz;
+fromInt -> switchInput -> packetClassifierPrz;
 
-packetClassifierInt[0] -> requestInArp -> arpReplyInt -> toPrz;
+packetClassifierInt[0] -> requestInArp -> arpReplyInt -> toInt;
 packetClassifierInt[1] -> responseInArp -> [1]arpRequestInt;
 packetClassifierInt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierInt;
 packetClassifierInt[3] -> switchDrop -> Discard;
 
-ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExt -> toExtern;
-ipClassifierInt[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExt -> toExtern;
+ipClassifierInt[0] -> icmpIn -> IcmpRe[0] -> [0]arpRequestExt -> toExt;
+ipClassifierInt[1] -> serviseRequest1 -> IpRe[0] -> [0]arpRequestExt -> toExt;
 ipClassifierInt[2] -> icmpDropIn1 -> Discard; 
 ipClassifierInt[3] -> icmpDropIn2 -> Discard;
 
 
-fromExtern -> serverInput -> packetClassifierExt;
+fromExt -> serverInput -> packetClassifierExt;
 
-packetClassifierExt[0] -> requestOutArp -> arpReplyExt -> toExtern;
+packetClassifierExt[0] -> requestOutArp -> arpReplyExt -> toExt;
 packetClassifierExt[1] -> responseOutArp -> [1]arpRequestExt;
 packetClassifierExt[2] -> FixedForwarder -> Strip(14) -> CheckIPHeader -> ipClassifierExt;
 packetClassifierExt[3] -> serverDrop -> Discard;
 
 ipClassifierExt[0] -> icmpDropOut2 -> Discard;
-ipClassifierExt[1] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestInt -> toPrz;
-ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestInt -> toPrz;
+ipClassifierExt[1] -> serviseRequest2 -> IpRe[1] -> [0]arpRequestInt -> toInt;
+ipClassifierExt[2] -> icmpOut -> IcmpRe[1] -> [0]arpRequestInt -> toInt;
 ipClassifierExt[3] -> icmpDropOut1  -> Discard;
 
 

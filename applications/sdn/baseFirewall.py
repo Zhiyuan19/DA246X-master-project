@@ -99,9 +99,7 @@ class Firewall (l2_learning.LearningSwitch):
                           	
         #check for messages coming back to h3, h4
 	
-        prz = '100.0.0.48/28'
-	    #h3_ip = '100.0.0.50/24'
-	    #h4_ip = '100.0.0.51/24'
+        prz = '100.0.0.1/32'
 
         #check TCP
         if self.subnet_check(prz, dst_addr):
@@ -131,19 +129,19 @@ class Firewall (l2_learning.LearningSwitch):
           
 
 
-          #print("\n")
-          #print("checking individual conditions")
-          #print(f"source address: {src_addr}")
-          #print(f"source address: {dst_addr}")
-          #print(f"received on port {input_port}: ")
-          #print(input_port)
-          #print(self.protocol_check(rule[1],tcp_udp))
-          #print(self.subnet_check(rule[2], src_addr))
-          #print(self.tcp_port_check(rule[3], tcp_src_port))
-          #print(self.subnet_check(rule[4], dst_addr))
-          #print(self.tcp_port_check(rule[5], tcp_dst_port))
-          #print(rule[6])
-          #print("end checking") 
+          print("\n")
+          print("checking individual conditions")
+          print(f"source address: {src_addr}")
+          print(f"source address: {dst_addr}")
+          print(f"received on port {input_port}: ")
+          print(input_port)
+          print(self.protocol_check(rule[1],tcp_udp))
+          print(self.subnet_check(rule[2], src_addr))
+          print(self.tcp_port_check(rule[3], tcp_src_port))
+          print(self.subnet_check(rule[4], dst_addr))
+          print(self.tcp_port_check(rule[5], tcp_dst_port))
+          print(rule[6])
+          print("end checking") 
           
           if rule[0] == input_port and self.protocol_check(rule[1],tcp_udp) and self.subnet_check(rule[2], src_addr) and self.tcp_port_check(rule[3], tcp_src_port) and self.subnet_check(rule[4],   dst_addr) and self.tcp_port_check(rule[5], tcp_dst_port):
             if rule[6] == 'allow':

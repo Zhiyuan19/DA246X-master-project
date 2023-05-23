@@ -40,8 +40,8 @@ elementclass FixedForwarder {
 
   // Queues
 
-  toInt :: Queue(1024) -> avgCntToInt -> toIntDevice
-  toExt :: Queue(1024) -> avgCntToExt -> toExtDevice
+  toInt :: Queue -> avgCntToInt -> toIntDevice
+  toExt :: Queue -> avgCntToExt -> toExtDevice
 
   // Classifiers
 

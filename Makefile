@@ -16,13 +16,6 @@ app:
 	cd $(poxdir) && python ./pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
 	
 
-test_prog:
-	@echo "starting mininet and test program!"
-	sudo python ./topology/topology_test.py 2>&1 | tee ${OUT_LOG_TEST_RESULT}
-test:
-	make app
-	make test_prog
-
 clean:
 	@echo "project files removed from pox directory!"
 	sudo mn --link=tc --topo=mytopo

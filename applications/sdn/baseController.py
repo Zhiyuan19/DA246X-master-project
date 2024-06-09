@@ -89,44 +89,19 @@ class controller (object):
 
         dpid = event.dpid
 
-        if dpid == 1 or dpid == 2 or dpid == 3 or dpid == 4 :
+        if dpid == 1 or dpid == 2 or dpid == 3 :
 
             l2_instance = LearningSwitch(event.connection, False)
 
             self.devices[len(self.devices)] = l2_instance
+            log.info("Switch started")
 
             # print(l2_instance.macToPort)
-
-        if dpid == 5:
-
-            fw1 = networkFirewalls.FW1(event.connection)
-
-            self.devices[len(self.devices)] = fw1
-
-        if dpid == 6:
-
-            fw2 = networkFirewalls.FW2(event.connection)
-
-            self.devices[len(self.devices)] = fw2
-        
-        if dpid == 8:
-            log.info("\nStarting a Click process for IDS Switch %d" % event.dpid)
-        #    p = click_wrapper.start_click("/opt/pox/ext/ids.click", -1, "/opt/pox/ext/ids_tmp/ids.out", "/opt/pox/ext/ids_tmp/ids.err" )
-            self.ids_launch_click(event.dpid)
-            #log.info("Launched click with PID:" +str(p.pid)+"\n")
           
-        if dpid == 7:
-            log.info("Starting click process for LB Switch = %d" % dpid)
-            #p = click_wrapper.start_click("/opt/pox/ext/lb1.click", "", "/opt/pox/ext/ids_tmp/lb1.out", "/opt/pox/ext/ids_tmp/lb1.err")
-            self.launch_click(dpid)
-#           ib1 = self.launch_click
-# lb1 does not exist
-#            self.devices[len(self.devices)] = lb1
-
-        if dpid == 9:
-            log.info("\nStarting a Click process for NAPT Switch %d" % event.dpid)
+        #if dpid == 9:
+           # log.info("\nStarting a Click process for NAPT Switch %d" % event.dpid)
         #   p = click_wrapper.start_click("/opt/pox/ext/napt.click", -1, "/opt/pox/ext/ids_tmp/napt.out", "/opt/pox/ext/ids_tmp/napt.err" )
-            self.napt_launch_click(event.dpid)
+            #self.napt_launch_click(event.dpid)
 
 
         return

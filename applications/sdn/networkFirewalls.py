@@ -27,8 +27,6 @@ class FW1 (Firewall):
         The following is just a sample to give you the idea.
         """
 
-        ### COMPLETE THIS PART ###
-
         Firewall.__init__(self, connection, "FW1")
         self.rules = [
             [1, 'TCP', 'any', 'any', '100.0.0.40/29', '80', 'allow'], # allow Pbz to DMC webserver
@@ -49,9 +47,6 @@ class FW2 (Firewall):
         Initialize Firewall class and set rules!
         The following is just a sample to give you the idea.
         """
-
-        ### COMPLETE THIS PART ###
-
         Firewall.__init__(self, connection, "FW2")
         self.rules = [
             [2, 'TCP', 'any', 'any', '100.0.0.40/29', '80', 'allow'], # allow Prz to DMC webserver

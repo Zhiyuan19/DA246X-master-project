@@ -1,5 +1,7 @@
 ## How to run the project
 
+install the snort on your VM first.
+
 **make topo:**
 
 Starts mininet topology

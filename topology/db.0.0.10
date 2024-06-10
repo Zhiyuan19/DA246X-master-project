@@ -7,5 +7,5 @@
     ;
 @       IN      NS      ns.demo.com.
 2       IN      PTR     ns.demo.com.
-1       IN      PTR     host1.demo.com.
+4       IN      PTR     host1.demo.com.
 3       IN      PTR     fweth2.demo.com.

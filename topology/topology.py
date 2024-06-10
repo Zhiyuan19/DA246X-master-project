@@ -13,7 +13,7 @@ def simpleTopo():
     net = Containernet(controller=None, switch=OVSKernelSwitch)
     
     # Add hosts
-    h1 = net.addHost('h1', ip='10.0.0.1/24', defaultRoute='via 10.0.0.254')
+    h1 = net.addHost('h1', ip='10.0.0.4/24', defaultRoute='via 10.0.0.254')
     dns = net.addDocker('dns', ip='10.0.0.2/24', dimage="ubuntu:trusty", defaultRoute='via 10.0.0.254')
     h3 = net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
     h4 = net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
@@ -93,6 +93,7 @@ def simpleTopo():
     dns.cmd('ln -sf /tmp/resolv.conf /etc/resolv.conf')
     
     dns.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
+    dns.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
     #install DNS
     dns.cmd('apt-get update')
     dns.cmd('echo "Y" |apt install bind9 bind9utils bind9-doc')
@@ -140,4 +141,5 @@ if __name__ == '__main__':
     os.system('sudo iptables -A FORWARD -o s3 -j ACCEPT')
     
     simpleTopo()
+    os.system('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
 

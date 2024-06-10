@@ -11,7 +11,7 @@ app:
 	@echo "starting the baseController!"
 
 	sudo cp ./applications/sdn/* /opt/pox/ext
-	sudo cp ./applications/nfv/* /opt/pox/ext
+	#sudo cp ./applications/nfv/* /opt/pox/ext
 	mkdir -p /opt/pox/ext/results
 	cd $(poxdir) && python ./pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
 	

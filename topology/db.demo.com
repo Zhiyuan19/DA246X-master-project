@@ -6,7 +6,7 @@
                           604800 )       ; Negative Cache TTL
     ;
 @       IN      NS      ns.demo.com.
-@       IN      A       10.0.0.2
-ns      IN      A       10.0.0.2
-host1     IN      A       10.0.0.4
-fweth2     IN      A       10.0.0.3
+@       IN      A       10.0.0.21
+ns      IN      A       10.0.0.21
+host1     IN      A       10.0.0.20
+fweth2     IN      A       10.0.0.22

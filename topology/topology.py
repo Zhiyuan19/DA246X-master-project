@@ -13,8 +13,8 @@ def simpleTopo():
     net = Containernet(controller=None, switch=OVSKernelSwitch)
     
     # Add hosts
-    h1 = net.addHost('h1', ip='10.0.0.4/24', defaultRoute='via 10.0.0.254')
-    dns = net.addDocker('dns', ip='10.0.0.2/24', dimage="ubuntu:trusty", defaultRoute='via 10.0.0.254')
+    h1 = net.addHost('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.254')
+    dns = net.addDocker('dns', ip='10.0.0.21/24', dimage="ubuntu:trusty", defaultRoute='via 10.0.0.254')
     h3 = net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
     h4 = net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
     ws1 = net.addHost('ws1', ip='100.0.0.40/24', defaultRoute='via 100.0.0.254')
@@ -41,7 +41,7 @@ def simpleTopo():
     
     net.get("fw").cmd("ifconfig fw-eth0 10.0.1.1 netmask 255.255.255.0")
     net.get("fw").cmd("ifconfig fw-eth1 100.0.0.1 netmask 255.255.255.0")
-    net.get("fw").cmd("ifconfig fw-eth2 10.0.0.3 netmask 255.255.255.0")
+    net.get("fw").cmd("ifconfig fw-eth2 10.0.0.22 netmask 255.255.255.0")
     net.get("fw").cmd('sysctl -w net.ipv4.ip_forward=1')
     
     # Check if iptables is available and add firewall rules
@@ -75,10 +75,10 @@ def simpleTopo():
     else:
         print("iptables not found on fw host")
     # Configure routing and Internet access
-    net.get("dns").cmd("ip route add 10.0.1.0/24 via 10.0.0.3")
-    net.get("dns").cmd("ip route add 100.0.0.0/24 via 10.0.0.3")
-    net.get("h1").cmd("ip route add 10.0.1.0/24 via 10.0.0.3")
-    net.get("h1").cmd("ip route add 100.0.0.0/24 via 10.0.0.3")
+    net.get("dns").cmd("ip route add 10.0.1.0/24 via 10.0.0.22")
+    net.get("dns").cmd("ip route add 100.0.0.0/24 via 10.0.0.22")
+    net.get("h1").cmd("ip route add 10.0.1.0/24 via 10.0.0.22")
+    net.get("h1").cmd("ip route add 100.0.0.0/24 via 10.0.0.22")
     s1.cmd('ifconfig s1 10.0.0.254/24')
     
     net.get("ws1").cmd("ip route add 10.0.1.0/24 via 100.0.0.1")
@@ -108,8 +108,8 @@ def simpleTopo():
     dns.cmd('service bind9 restart')
     
     
-    h1.cmd('echo "nameserver 10.0.0.2" > /etc/resolv.conf')
-    dns.cmd('echo "nameserver 10.0.0.2" > /etc/resolv.conf')
+    h1.cmd('echo "nameserver 10.0.0.21" > /etc/resolv.conf')
+    dns.cmd('echo "nameserver 10.0.0.21" > /etc/resolv.conf')
     
     #configure snort
     fw.cmd('snort -T -c /etc/snort/snort.conf -i fw-eth2')
@@ -142,4 +142,3 @@ if __name__ == '__main__':
     
     simpleTopo()
     os.system('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
-

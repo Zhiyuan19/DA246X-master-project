@@ -6,6 +6,6 @@
                           604800 )       ; Negative Cache TTL
     ;
 @       IN      NS      ns.demo.com.
-2       IN      PTR     ns.demo.com.
-4       IN      PTR     host1.demo.com.
-3       IN      PTR     fweth2.demo.com.
+21      IN      PTR     ns.demo.com.
+20      IN      PTR     host1.demo.com.
+22     IN      PTR     fweth2.demo.com.

@@ -1,4 +1,4 @@
-poxdir ?= /opt/pox/
+poxdir ?= /home/videoserver/Desktop/pox/
 
 OUT_LOG_CTRL_PLANE="./results/output_app.txt"
 OUT_LOG_TEST_RESULT="./results/output_test_prog.txt"
@@ -10,10 +10,10 @@ topo:
 app:
 	@echo "starting the baseController!"
 
-	sudo cp ./applications/sdn/* /opt/pox/ext
+	#sudo cp ./applications/sdn/* /opt/pox/ext
 	#sudo cp ./applications/nfv/* /opt/pox/ext
-	mkdir -p /opt/pox/ext/results
-	cd $(poxdir) && python ./pox.py baseController 2>&1 | tee ${OUT_LOG_CTRL_PLANE} &
+	#mkdir -p /opt/pox/ext/results
+	cd $(poxdir) && python ./pox.py forwarding.l2_learning
 	
 
 clean:

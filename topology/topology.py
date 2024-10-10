@@ -14,7 +14,7 @@ def simpleTopo():
     
     # Add hosts
     h1 = net.addHost('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.254')
-    dns = net.addDocker('dns', ip='10.0.0.21/24', dimage="ubuntu:trusty", defaultRoute='via 10.0.0.254')
+    dns = net.addDocker('dns', ip='10.0.0.21/24', dimage="containernet:dns", defaultRoute='via 10.0.0.254')
     h3 = net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
     h4 = net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
     ws1 = net.addHost('ws1', ip='100.0.0.40/24', defaultRoute='via 100.0.0.254')
@@ -95,15 +95,17 @@ def simpleTopo():
     dns.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
     dns.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
     #install DNS
-    dns.cmd('apt-get update')
-    dns.cmd('echo "Y" |apt install bind9 bind9utils bind9-doc')
-    dns.cmd('echo "Y" |apt install dnsutils')
+    #dns.cmd('apt-get update')
+    #dns.cmd('echo "Y" |apt install bind9 bind9utils bind9-doc')
+    #dns.cmd('echo "Y" |apt install dnsutils')
     #configure DNS
     
-    os.system('docker cp /home/ik2220/Desktop/project/topology/named.conf.options mn.dns:/etc/bind/')
-    os.system('docker cp /home/ik2220/Desktop/project/topology/named.conf.local mn.dns:/etc/bind/')
-    os.system('docker cp /home/ik2220/Desktop/project/topology/db.demo.com mn.dns:/etc/bind/')
-    os.system('docker cp /home/ik2220/Desktop/project/topology/db.0.0.10 mn.dns:/etc/bind/')
+    #current_file_path = os.path.abspath(__file__)
+    #current_directory = os.path.dirname(current_file_path)
+    #os.system(f'docker cp {current_directory}/named.conf.options mn.dns:/etc/bind/')
+    #os.system(f'docker cp {current_directory}/named.conf.local mn.dns:/etc/bind/')
+    #os.system(f'docker cp {current_directory}/db.demo.com mn.dns:/etc/bind/')
+    #os.system(f'docker cp {current_directory}/db.0.0.10 mn.dns:/etc/bind/')
 
     dns.cmd('service bind9 restart')
     

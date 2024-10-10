@@ -1,0 +1,14 @@
+FROM ubuntu:trusty
+
+RUN apt-get update && apt-get install -y \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    telnet telnetd \
+    iperf \
+    bind9 bind9utils bind9-doc\
+    dnsutils
+
+COPY conf/* /etc/bind/
+
+CMD /bin/bash && service bind9 restart

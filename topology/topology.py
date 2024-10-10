@@ -83,7 +83,7 @@ def simpleTopo():
     
     net.get("ws1").cmd("ip route add 10.0.1.0/24 via 100.0.0.1")
     net.get("ws1").cmd("ip route add 10.0.0.0/24 via 100.0.0.1")
-    s3.cmd('ifconfig s3 100.0.0.254/24')
+    #s3.cmd('ifconfig s3 100.0.0.254/24')
     
         
     h1.cmd('echo "nameserver 8.8.8.8" > /tmp/resolv.conf')
@@ -112,10 +112,10 @@ def simpleTopo():
     dns.cmd('echo "nameserver 10.0.0.21" > /etc/resolv.conf')
     
     #configure snort
-    fw.cmd('snort -T -c /etc/snort/snort.conf -i fw-eth2')
-    fw.cmd('snort -D -i fw-eth2 -c /etc/snort/snort.conf -A fast')
-    fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
-    fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
+    #fw.cmd('snort -T -c /etc/snort/snort.conf -i fw-eth2')
+    #fw.cmd('snort -D -i fw-eth2 -c /etc/snort/snort.conf -A fast')
+    #fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
+    #fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
     
     print("Testing connectivity in my network")
     net.pingAll()
@@ -133,7 +133,7 @@ def simpleTopo():
 if __name__ == '__main__':
     setLogLevel('info')
     os.system('sudo sysctl -w net.ipv4.ip_forward=1')
-    os.system('sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE')
+    os.system('sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE')
     os.system('ip route')
     os.system('sudo iptables -A FORWARD -i s1 -j ACCEPT')
     os.system('sudo iptables -A FORWARD -o s1 -j ACCEPT')

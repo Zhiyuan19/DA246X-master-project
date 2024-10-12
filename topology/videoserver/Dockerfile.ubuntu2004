@@ -1,0 +1,15 @@
+FROM ubuntu:focal
+MAINTAINER manuel.peuster@uni-paderborn.de
+
+RUN apt-get update && apt-get install -y \
+    net-tools \
+    iputils-ping \
+    iproute2\
+    sudo \
+    curl \
+    tzdata 
+COPY linux-webcam-server /home/linux-webcam-server
+
+RUN cd /home/linux-webcam-server && ./install_camserver
+
+CMD /bin/bash

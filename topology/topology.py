@@ -17,7 +17,7 @@ def simpleTopo():
     dns = net.addDocker('dns', ip='10.0.0.21/24', dimage="containernet:dns", defaultRoute='via 10.0.0.254')
     h3 = net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
     h4 = net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
-    ws1 = net.addHost('ws1', ip='100.0.0.40/24', defaultRoute='via 100.0.0.254')
+    ws1 = net.addDocker('ws1', ip='100.0.0.40/24', dimage="containernet:videoserver", ports=[8001,8081,8082],devices=["/dev/video0","/dev/snd"], defaultRoute='via 100.0.0.254')
     fw = net.addHost('fw', ip='10.0.1.1/24')
     # Add switch
     s1 = net.addSwitch('s1', dpid="1")
@@ -121,10 +121,10 @@ def simpleTopo():
     
     print("Testing connectivity in my network")
     net.pingAll()
-    print("\nTesting bandwidth between h1 and ws1...")
-    h1, ws1 = net.get('h1', 'ws1')
-    result = ws1.cmd('iperf -s &')  
-    print(h1.cmd('iperf -c', ws1.IP()))  
+    #print("\nTesting bandwidth between h1 and ws1...")
+    #h1, ws1 = net.get('h1', 'ws1')
+    #result = ws1.cmd('iperf -s &')  
+    #print(h1.cmd('iperf -c', ws1.IP()))  
     
     #h1.cmd('ln -sf /tmp/resolv.conf /etc/resolv.conf')
     #dns.cmd('ln -sf /tmp/resolv.conf /etc/resolv.conf')
@@ -143,4 +143,4 @@ if __name__ == '__main__':
     os.system('sudo iptables -A FORWARD -o s3 -j ACCEPT')
     
     simpleTopo()
-    os.system('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
+    os.system('sudo echo "nameserver 8.8.8.8" > /etc/resolv.conf')

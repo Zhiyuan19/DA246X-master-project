@@ -1,0 +1,3 @@
+[submodule "topology/videoserver/linux-webcam-server"]
+	path = topology/videoserver/linux-webcam-server
+	url = https://github.com/Zhiyuan19/linux-webcam-server.git

@@ -114,10 +114,10 @@ def simpleTopo():
     dns.cmd('echo "nameserver 10.0.0.21" > /etc/resolv.conf')
     
     #configure snort
-    #fw.cmd('snort -T -c /etc/snort/snort.conf -i fw-eth2')
-    #fw.cmd('snort -D -i fw-eth2 -c /etc/snort/snort.conf -A fast')
-    #fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
-    #fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
+    fw.cmd('snort -T -c /etc/snort/snort.conf -i fw-eth2')
+    fw.cmd('snort -D -i fw-eth2 -c /etc/snort/snort.conf -A fast')
+    fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
+    fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
     
     print("Testing connectivity in my network")
     net.pingAll()

@@ -1,3 +1,6 @@
 [submodule "topology/videoserver/linux-webcam-server"]
 	path = topology/videoserver/linux-webcam-server
 	url = https://github.com/Zhiyuan19/linux-webcam-server.git
+[submodule "gym-idsgame"]
+	path = gym-idsgame
+	url = https://github.com/Zhiyuan19/gym-idsgame.git

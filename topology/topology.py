@@ -119,8 +119,8 @@ def simpleTopo():
     fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
     fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
     
-    print("Testing connectivity in my network")
-    net.pingAll()
+    #print("Testing connectivity in my network")
+    #net.pingAll()
     #print("\nTesting bandwidth between h1 and ws1...")
     #h1, ws1 = net.get('h1', 'ws1')
     #result = ws1.cmd('iperf -s &')  

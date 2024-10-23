@@ -11,7 +11,7 @@ class Mytopo:
         self.net = Containernet(controller=None, switch=OVSKernelSwitch)
         
         # Add hosts
-        h1 = self.net.addHost('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.254')
+        h1 = self.net.addHost('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.22')
         dns = self.net.addDocker('dns', ip='10.0.0.21/24', dimage="containernet:dns", defaultRoute='via 10.0.0.254')
         h3 = self.net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
         h4 = self.net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
@@ -42,6 +42,7 @@ class Mytopo:
         self.net.get("fw").cmd("ifconfig fw-eth1 100.0.0.1 netmask 255.255.255.0")
         self.net.get("fw").cmd("ifconfig fw-eth2 10.0.0.22 netmask 255.255.255.0")
         self.net.get("fw").cmd('sysctl -w net.ipv4.ip_forward=1')
+        fw.cmd('ip route add default via 100.0.0.254')
     
         # Check if iptables is available and add firewall rules
         if self.net.get("fw").cmd('which iptables'):
@@ -79,12 +80,12 @@ class Mytopo:
         self.net.get("dns").cmd("ip route add 100.0.0.0/24 via 10.0.0.22")
         self.net.get("h1").cmd("ip route add 10.0.1.0/24 via 10.0.0.22")
         self.net.get("h1").cmd("ip route add 100.0.0.0/24 via 10.0.0.22")
-        s1.cmd('ifconfig s1 10.0.0.254/24')
+        #s1.cmd('ifconfig s1 10.0.0.254/24')
     
         self.net.get("ws1").cmd("ip route add 10.0.1.0/24 via 100.0.0.1")
         self.net.get("ws1").cmd("ip route add 10.0.0.0/24 via 100.0.0.1")
-        #s3.cmd('ifconfig s3 100.0.0.254/24')
-    
+        s3.cmd('ifconfig s3 100.0.0.254/24')
+        os.system('sudo ip route add 10.0.0.0/24 via 100.0.0.1')
         
         h1.cmd('echo "nameserver 8.8.8.8" > /tmp/resolv.conf')
         dns.cmd('echo "nameserver 8.8.8.8" > /tmp/resolv.conf')
@@ -127,8 +128,8 @@ if __name__ == '__main__':
     os.system('sudo iptables -A FORWARD -o s3 -j ACCEPT')
     
     topo = Mytopo()
-    print("Testing connectivity in my network")
-    topo.net.pingAll()
+    #print("Testing connectivity in my network")
+    #topo.net.pingAll()
     CLI(topo.net)
     topo.net.stop()
     os.system('sudo echo "nameserver 8.8.8.8" > /etc/resolv.conf')

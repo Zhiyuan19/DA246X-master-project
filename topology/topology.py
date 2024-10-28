@@ -11,7 +11,7 @@ class Mytopo:
         self.net = Containernet(controller=None, switch=OVSKernelSwitch)
         
         # Add hosts
-        h1 = self.net.addHost('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.22')
+        h1 = self.net.addDocker('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.22', dimage= "mcnamee/huntkit:latest")
         dns = self.net.addDocker('dns', ip='10.0.0.21/24', dimage="containernet:dns", defaultRoute='via 10.0.0.254')
         h3 = self.net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
         h4 = self.net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')

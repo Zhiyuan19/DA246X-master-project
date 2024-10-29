@@ -7,7 +7,16 @@ RUN apt-get update && apt-get install -y \
     iproute2\
     sudo \
     curl \
-    tzdata 
+    tzdata \
+    openssh-server
+    
+RUN mkdir /var/run/sshd && \
+    useradd -m -s /bin/bash user && \
+    echo "user:password123" | chpasswd
+
+# Copy the pre-configured SSH configuration file
+COPY ssh/sshd_config /etc/ssh/sshd_config
+
 COPY linux-webcam-server /home/linux-webcam-server
 
 RUN cd /home/linux-webcam-server && ./install_camserver

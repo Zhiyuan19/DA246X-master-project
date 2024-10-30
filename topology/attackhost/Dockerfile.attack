@@ -1,0 +1,10 @@
+FROM mcnamee/huntkit:latest
+
+RUN apt-get update && apt-get install -y \
+    sshpass \
+    expect && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+
+CMD /bin/bash

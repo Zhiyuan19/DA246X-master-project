@@ -11,7 +11,7 @@ class Mytopo:
         self.net = Containernet(controller=None, switch=OVSKernelSwitch)
         
         # Add hosts
-        h1 = self.net.addDocker('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.22', dimage= "mcnamee/huntkit:latest", volumes=["/home/videoserver/Desktop/DA246X-master-project/topology/attacks:/home/attacks"])
+        h1 = self.net.addDocker('h1', ip='10.0.0.20/24', defaultRoute='via 10.0.0.22', dimage= "mcnamee/huntkit:attack", volumes=["/home/videoserver/Desktop/DA246X-master-project/topology/attacks:/home/attacks"])
         dns = self.net.addDocker('dns', ip='10.0.0.21/24', dimage="containernet:dns", defaultRoute='via 10.0.0.254')
         h3 = self.net.addHost('h3', ip='10.0.1.2/24', defaultRoute='via 10.0.1.1')
         h4 = self.net.addHost('h4', ip='10.0.1.3/24', defaultRoute='via 10.0.1.1')
@@ -107,6 +107,7 @@ class Mytopo:
         fw.cmd('snort -D -i fw-eth0 -c /etc/snort/snorteth0.conf -A fast')
         fw.cmd('snort -D -i fw-eth1 -c /etc/snort/snorteth1.conf -A fast')
     
+        ws1.cmd('service ssh restart')
         #print("\nTesting bandwidth between h1 and ws1...")
         #h1, ws1 = self.net.get('h1', 'ws1')
         #result = ws1.cmd('iperf -s &')  

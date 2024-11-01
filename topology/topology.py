@@ -116,6 +116,32 @@ class Mytopo:
         #h1.cmd('ln -sf /tmp/resolv.conf /etc/resolv.conf')
         #dns.cmd('ln -sf /tmp/resolv.conf /etc/resolv.conf')
         #dns.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
+
+
+    def attackactionsmapping(self, node_id : int, attack_type : int):
+        if node_id == 0 and attack_type == 4:# reconnaisance phase:
+            result = self.net.get("h1").cmd('/home/attacks/t1595_scan.sh')
+            if result:
+                next_stage = "initialaccess"
+        if node_id == 0 and attack_type == 0:# intial access phase:
+            result = self.net.get("h1").cmd('/home/attacks/t1190ssh.sh')
+            if result:
+                next_stage = "privilegeescalation"
+        if node_id == 0 and attack_type == 1:# privilege escalation phase:
+            result = self.net.get("h1").cmd('/home/attacks/t1078_root.sh')
+            if result:
+                next_stage = "persistence"
+        if node_id == 0 and attack_type == 2:# persistence phase:
+            result = self.net.get("h1").cmd('/home/attacks/t1078_root.sh')
+            if result:
+                next_stage = "excution"
+        if node_id == 0 and attack_type == 3:# data exfiltration phase:
+            result = self.net.get("h1").cmd('/home/attacks/t1078_root.sh')  
+            if result:
+                next_stage = "excution" 
+        ##to be continued: 
+        return next_stage
+            
         
 
 if __name__ == '__main__':

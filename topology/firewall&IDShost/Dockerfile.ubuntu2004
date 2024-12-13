@@ -1,0 +1,55 @@
+FROM ubuntu:focal
+MAINTAINER manuel.peuster@uni-paderborn.de
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    net-tools \
+    iputils-ping \
+    iproute2\
+    sudo \
+    curl \
+    tzdata \
+    openssh-server \
+    build-essential \
+    libpcap-dev \
+    flex \
+    bison \
+    libpcre3-dev \
+    libdumbnet-dev \
+    zlib1g-dev \
+    iptables
+    
+RUN mkdir /var/run/sshd && \
+    useradd -m -s /bin/bash user && \
+    echo "user:password123" | chpasswd
+
+# Copy the pre-configured SSH configuration file
+COPY ssh/sshd_config /etc/ssh/sshd_config
+
+RUN sudo -u user mkdir -p /home/user/shared && \
+    sudo -u user ssh-keygen -t rsa -b 2048 -f /home/user/shared/id_rsa -q -N "" && \
+    chmod 755 /home/user/shared && \
+    chmod 644 /home/user/shared/id_rsa && \
+    cat /home/user/shared/id_rsa.pub >> /home/user/shared/authorized_keys && \
+    chmod 644 /home/user/shared/authorized_keys && \
+    mkdir -p /root/.ssh && \
+    cat /home/user/shared/id_rsa.pub >> /root/.ssh/authorized_keys && \
+    chmod 600 /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh
+
+##install snort
+RUN wget https://www.snort.org/downloads/snort/daq-2.0.7.tar.gz && \
+    tar xvf daq-2.0.7.tar.gz && \
+    cd daq-2.0.7 && \
+    ./configure && make && sudo make install
+    
+RUN wget https://www.snort.org/downloads/snort/snort-2.9.20.tar.gz && \
+    tar xzf snort-2.9.20.tar.gz && \
+    cd snort-2.9.20 && \
+    ./configure --disable-open-appid && \
+    make && sudo make install && \
+    ldconfig && \
+    ln -s /usr/local/bin/snort /usr/sbin/snort
+
+CMD /bin/bash

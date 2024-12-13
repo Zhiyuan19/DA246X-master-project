@@ -1,0 +1,6 @@
+# Nmap 7.80 scan initiated Wed Dec 11 07:35:28 2024 as: nmap -Pn -n -p 0-9000 -T4 -oN /home/attacks/t1595_scan_results_100.0.0.1.txt 100.0.0.1
+Nmap scan report for 100.0.0.1
+Host is up (0.038s latency).
+All 9001 scanned ports on 100.0.0.1 are closed
+
+# Nmap done at Wed Dec 11 07:35:31 2024 -- 1 IP address (1 host up) scanned in 3.08 seconds

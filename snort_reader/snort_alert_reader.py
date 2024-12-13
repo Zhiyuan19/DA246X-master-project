@@ -227,6 +227,10 @@ class LogReader():
         self.notification_pool  = []
         self.notify_hours       = 6
         self.reload_zero_hours  = 3
+        self.maximum_priortity  = 0
+        self.counter_low_priority = 0
+        self.counter_high_priority = 0
+        self.variable_config = variable.VariableConfig()
 
         # check log path
         log_path = conf.get_log_path()
@@ -519,6 +523,10 @@ class LogReader():
 
             # pause collection when nothing to read
             if not line:
+                self.variable_config.counter_low_priority = self.counter_low_priority
+                self.variable_config.counter_high_priority = self.counter_high_priority
+                self.variable_config.save()
+                
                 if not idle_time_start:
                     idle_time_start = int(time.time())
 
@@ -619,9 +627,20 @@ class LogReader():
                 snort_dst_ip    = match[0][7]
                 snort_dst_post  = match[0][8]
                 
-                variable_config = variable.VariableConfig()
-                variable_config.priority = snort_priority
-                variable_config.save()
+                print("snort priortity is", snort_priority) 
+                if snort_priority > self.maximum_priortity:
+                    self.maximum_priortity = snort_priority
+                    self.variable_config.priority = snort_priority
+                    self.variable_config.save()
+                    
+                if snort_priority < 2:
+                    self.counter_low_priority = self.counter_low_priority + 1
+                    print("self.counter_low_priority = is:", self.counter_low_priority)
+                
+                if snort_priority >= 2:
+                    self.counter_high_priority = self.counter_high_priority + 1
+                    print("self.counter_high_priority = is:", self.counter_high_priority)
+                    
                 if snort_priority < 3:
                     self.notify("PR #%s" % snort_priority, snort_rule, snort_name, "%s -> %s" % (snort_src_ip, snort_dst_ip))
 

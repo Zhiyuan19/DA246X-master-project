@@ -1,0 +1,10 @@
+@       IN      SOA     ns.dmz.com. root.dmz.com. (
+                              2         ; Serial
+                          604800         ; Refresh
+                           86400         ; Retry
+                         2419200         ; Expire
+                          604800 )       ; Negative Cache TTL
+    ;
+@       IN      NS      ns.dmz.com.
+40      IN      PTR     ws1.dmz.com.
+1       IN      PTR     fw.dmz.com.

@@ -13,7 +13,7 @@ TARGET="$1"
 OUTPUT_FILE="/home/attacks/t1595_scan_results_$TARGET.txt"
 
 # Run nmap scan with SYN scan, service version detection, and vulnerability script
-nmap -Pn -n -p 0-9000 -T4 "$TARGET" -oN "$OUTPUT_FILE" --host-timeout 10s
+nmap -Pn -n -p 0-9000 -T4 "$TARGET" -oN "$OUTPUT_FILE" --host-timeout 15s
 
 # Display the saved results
 if [ -f "$OUTPUT_FILE" ]; then

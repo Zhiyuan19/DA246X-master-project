@@ -36,9 +36,15 @@ if [ ! -f "$PRIVATE_KEY_PATH" ]; then
 fi
 
 # Test SSH connectivity
-ssh -i "$PRIVATE_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=no root@"$TARGET_IP" exit
-if [[ $? -ne 0 ]]; then
-    echo "Error: Unable to connect to target $TARGET_IP with the provided key or connection issue. Aborting."
+TIMEOUT_DURATION=2 
+
+if ! timeout $TIMEOUT_DURATION ssh -i "$PRIVATE_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=no root@"$TARGET_IP" exit; then
+    EXIT_CODE=$?
+    if [ $EXIT_CODE -eq 124 ]; then
+        echo "Error: Command timed out after $TIMEOUT_DURATION seconds. Exiting."
+    else
+        echo "Error: Unable to connect to target $TARGET_IP with the provided key or connection issue. Aborting."
+    fi
     exit 1
 fi
 echo "Root access has been confirmed."

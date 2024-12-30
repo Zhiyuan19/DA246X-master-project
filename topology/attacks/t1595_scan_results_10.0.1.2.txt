@@ -1,5 +1,9 @@
-# Nmap 7.80 scan initiated Sat Dec 14 02:22:15 2024 as: nmap -Pn -n -p 0-9000 -T4 -oN /home/attacks/t1595_scan_results_10.0.1.2.txt --host-timeout 10s 10.0.1.2
+# Nmap 7.80 scan initiated Thu Dec 19 21:03:18 2024 as: nmap -Pn -n -p 0-9000 -T4 -oN /home/attacks/t1595_scan_results_10.0.1.2.txt --host-timeout 15s 10.0.1.2
 Nmap scan report for 10.0.1.2
-Host is up.
-Skipping host 10.0.1.2 due to host timeout
-# Nmap done at Sat Dec 14 02:22:25 2024 -- 1 IP address (1 host up) scanned in 10.17 seconds
+Host is up (0.17s latency).
+Not shown: 8999 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+# Nmap done at Thu Dec 19 21:03:24 2024 -- 1 IP address (1 host up) scanned in 6.58 seconds

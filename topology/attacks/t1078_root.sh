@@ -27,8 +27,13 @@ fi
 TARGET_USER=$(echo "$CREDENTIAL" | awk -F ',' '{print $2}')
 PASSWORD=$(echo "$CREDENTIAL" | awk -F ',' '{print $3}')
 # find private key
-if ! sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} "cat /home/${TARGET_USER}/shared/id_rsa" > "$PRIVATE_KEY_PATH"; then
-    echo "Error: Unable to retrieve the private key. Incorrect password or connection issue. Exiting."
+TIMEOUT_DURATION=2
+if ! timeout $TIMEOUT_DURATION sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} "cat /home/${TARGET_USER}/shared/id_rsa" > "$PRIVATE_KEY_PATH"; then
+    if [ $? -eq 124 ]; then
+        echo "Error: Command timed out after $TIMEOUT_DURATION seconds. Exiting."
+    else
+        echo "Error: Unable to retrieve the private key. Incorrect password or connection issue. Exiting."
+    fi
     exit 1
 fi
 #

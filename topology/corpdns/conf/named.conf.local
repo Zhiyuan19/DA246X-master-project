@@ -1,0 +1,9 @@
+zone "dmz.com" {
+        type master;
+        file "/etc/bind/db.dmz.com";
+};
+    
+zone "0.0.100.in-addr.arpa" {
+        type master;
+        file "/etc/bind/db.0.0.100";
+};

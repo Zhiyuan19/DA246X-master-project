@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     sudo \
     curl \
     tzdata \
-    openssh-server
+    openssh-server \
+    netcat \
+    iptables
     
 RUN mkdir /var/run/sshd && \
     useradd -m -s /bin/bash user && \

@@ -1,9 +1,0 @@
-# Nmap 7.80 scan initiated Sat Dec 14 02:22:29 2024 as: nmap -Pn -n -p 0-9000 -T4 -oN /home/attacks/t1595_scan_results_10.0.0.21.txt --host-timeout 10s 10.0.0.21
-Nmap scan report for 10.0.0.21
-Host is up (0.039s latency).
-Not shown: 9000 closed ports
-PORT   STATE SERVICE
-53/tcp open  domain
-MAC Address: 4E:BB:FE:F4:D0:32 (Unknown)
-
-# Nmap done at Sat Dec 14 02:22:32 2024 -- 1 IP address (1 host up) scanned in 3.01 seconds

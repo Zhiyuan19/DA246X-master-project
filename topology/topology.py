@@ -526,7 +526,7 @@ class Mytopo:
             target_ip = defender.IP()
         if node_id == 3:
             defender = self.net.get('Mahost')
-            target_ip = '100.0.0.50'
+            target_ip = '100.0.0.40'
         fw = self.net.get('fw')
         h1 = self.net.get('h1')
         #for intf in defender.intfList():
